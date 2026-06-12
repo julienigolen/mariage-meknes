@@ -1,6 +1,6 @@
-"""Site mariage Kenza & Julien — Fès, 23 octobre 2026.
+"""Site mariage Kenza & Julien — Meknès, 23 octobre 2026.
 
-S0 : porte à code commun + layout tokens (direction A · Bleu de Fès) + save-the-date.
+S0 : porte à code commun + layout tokens (direction A · Bleu zellige) + save-the-date.
 Stack : FastAPI + Jinja2 + Tailwind CDN + HTMX (patterns repris d'OWP).
 """
 from pathlib import Path
@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.routers import gate, site
 
-app = FastAPI(title="Mariage Kenza & Julien — Fès", docs_url=None, redoc_url=None, openapi_url=None)
+app = FastAPI(title="Mariage Kenza & Julien — Meknès", docs_url=None, redoc_url=None, openapi_url=None)
 
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
 app.include_router(gate.router)

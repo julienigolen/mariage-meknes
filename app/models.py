@@ -1,4 +1,4 @@
-"""Modèle de données — cf. docs/PROPOSITION_site_mariage_fes.md §4.
+"""Modèle de données — cf. docs/PROPOSITION_site_mariage_meknes.md §4.
 
 household : le foyer (unité de réponse RSVP)
 guest     : personne rattachée à un foyer
@@ -52,7 +52,7 @@ class Event(Base):
     slug: Mapped[str] = mapped_column(String(50), unique=True)
     title: Mapped[str] = mapped_column(String(200))
     starts_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    location: Mapped[str] = mapped_column(String(200), default="Palais Laraki, Fès")
+    location: Mapped[str] = mapped_column(String(200), default="Palais Laraki, Meknès")
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 
