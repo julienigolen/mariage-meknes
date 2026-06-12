@@ -2,64 +2,172 @@
 
 {% block content %}
 
-<!-- Hero — variante sans photo (S0) : fond encre uni, photo Palais Laraki en S1 -->
-<section class="w-full bg-encre">
-  <div class="max-w-wide mx-auto px-6 lg:px-8 py-24 lg:py-32 text-center">
+<!-- Hero — fond encre + photo en attente (déposer app/static/img/hero.webp, cf. static/img/README.md) -->
+<section class="relative w-full bg-encre">
+  <picture>
+    <source srcset="/static/img/hero.avif" type="image/avif">
+    <img src="/static/img/hero.webp" alt=""
+         class="absolute inset-0 w-full h-full object-cover" onerror="this.parentElement.remove()">
+  </picture>
+  <!-- Voile de lisibilité obligatoire (charte §5.3) : dégradé encre garantissant le contraste AA -->
+  <div class="absolute inset-0 bg-gradient-to-t from-encre/90 via-encre/70 to-encre/45" aria-hidden="true"></div>
+  <div class="relative max-w-wide mx-auto px-6 lg:px-8 py-24 lg:py-32 text-center">
     <p class="text-overline font-semibold uppercase text-cuivre-light">Save the date</p>
     <h1 class="font-display text-display text-onDark mt-4">Kenza &amp; Julien</h1>
     <p class="text-body-lg text-onDark-muted mt-6 max-w-prose mx-auto">
-      Après Valence, nous avons la joie de vous inviter à célébrer notre mariage au Maroc,
-      dans la ville de Meknès.
+      Après la cérémonie civile à Valence, nous avons la joie de vous convier au Maroc
+      pour célébrer notre mariage, entourés de nos deux familles et de nos deux cultures.
     </p>
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-4 text-onDark">
       <div><p class="text-overline uppercase text-zellige-light">Date</p><p class="font-display text-h3 mt-1">Vendredi 23 octobre 2026</p></div>
       <div class="hidden sm:block w-px h-12 bg-onDark-muted/30" aria-hidden="true"></div>
       <div><p class="text-overline uppercase text-zellige-light">Lieu</p><p class="font-display text-h3 mt-1">Palais Laraki, Meknès</p></div>
     </div>
-    <a href="#rsvp" class="inline-flex items-center h-12 px-8 mt-12 rounded-md bg-zellige text-white font-medium hover:bg-zellige-light hover:text-encre transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige-light focus-visible:ring-offset-2 focus-visible:ring-offset-encre">
-      Confirmer ma présence — bientôt
-    </a>
+    {% if days_left > 0 %}
+    <div class="inline-block mt-10 px-6 py-3 rounded-lg border border-onDark-muted/30 bg-onDark/10">
+      <p class="font-display text-h3 text-onDark">J−{{ days_left }}</p>
+    </div>
+    {% endif %}
+    <div class="mt-10">
+      <a href="#rsvp" class="inline-flex items-center h-12 px-8 rounded-md bg-zellige text-white font-medium hover:bg-zellige-light hover:text-encre transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige-light focus-visible:ring-offset-2 focus-visible:ring-offset-encre">
+        Confirmer ma présence — bientôt
+      </a>
+    </div>
   </div>
 </section>
 
 <div class="zellige-divider" aria-hidden="true"></div>
 
-<!-- Programme (placeholder S1) -->
+<!-- Programme -->
 <section id="programme" class="w-full">
+  <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24">
+    <div class="text-center">
+      <p class="text-overline font-semibold uppercase text-cuivre-text">Programme</p>
+      <h2 class="font-display text-h2 mt-2">Une soirée au Palais Laraki</h2>
+      <p class="text-small text-ardoise mt-3">Horaires indicatifs — le déroulé précis sera confirmé ici.</p>
+    </div>
+    <ol class="mt-12 max-w-prose mx-auto space-y-0">
+      {% for time, title, desc in [
+        ('19h00', 'Accueil des invités', 'Thé, pâtisseries et retrouvailles dans les salons du palais.'),
+        ('20h30', 'Entrée des mariés', 'Le moment où la fête commence vraiment.'),
+        ('22h00', 'Dîner', 'Un dîner aux saveurs marocaines, servi à table.'),
+        ('Jusqu’au petit matin', 'La fête', 'Musique et danse — prévoyez des chaussures confortables.'),
+      ] %}
+      <li class="relative flex gap-6 pb-10 last:pb-0">
+        <div class="flex flex-col items-center" aria-hidden="true">
+          <span class="w-3 h-3 rounded-full bg-zellige mt-1.5 shrink-0"></span>
+          {% if not loop.last %}<span class="w-px flex-1 bg-sable"></span>{% endif %}
+        </div>
+        <div>
+          <p class="text-overline font-semibold uppercase text-zellige-text">{{ time }}</p>
+          <h3 class="font-display text-h4 text-encre mt-1">{{ title }}</h3>
+          <p class="text-body text-ardoise mt-1">{{ desc }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<!-- Lieu — section sombre (respiration premium) -->
+<section id="lieu" class="w-full bg-encre">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
-    <p class="text-overline font-semibold uppercase text-cuivre-text">Programme</p>
-    <h2 class="font-display text-h2 mt-2">Une soirée au Palais Laraki</h2>
-    <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      La fête se déroulera entièrement au Palais Laraki, à Meknès,
-      et se prolongera jusqu'au petit matin. Le déroulé détaillé arrive bientôt.
+    <p class="text-overline font-semibold uppercase text-zellige-light">Le lieu</p>
+    <h2 class="font-display text-h2 text-onDark mt-2">Palais Laraki, Meknès</h2>
+    <picture>
+      <source srcset="/static/img/lieu.avif" type="image/avif">
+      <img src="/static/img/lieu.webp" alt="La salle de réception du Palais Laraki"
+           width="1200" height="900" loading="lazy"
+           class="rounded-lg shadow-lg mx-auto mt-10 w-full max-w-3xl"
+           onerror="this.parentElement.remove()">
+    </picture>
+    <p class="text-body text-onDark-muted mt-4 max-w-prose mx-auto">
+      Toute la soirée se déroule au même endroit — aucun déplacement à prévoir une fois sur place.
+      Les informations d'accès détaillées seront publiées ici.
     </p>
     <a href="https://www.google.com/maps?q=Palais+Laraki+Mekn%C3%A8s" target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2 mt-6 text-zellige-text font-medium hover:underline">
-      Voir le Palais Laraki sur la carte →
+       class="inline-flex items-center h-12 px-8 mt-8 rounded-md bg-zellige text-white font-medium hover:bg-zellige-light hover:text-encre transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige-light focus-visible:ring-offset-2 focus-visible:ring-offset-encre">
+      Voir sur Google Maps
     </a>
   </div>
 </section>
 
-<!-- Venir à Meknès (placeholder S4) -->
-<section id="venir" class="w-full bg-surface border-y border-sable">
+<!-- Dress code -->
+<section id="dresscode" class="w-full">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
-    <p class="text-overline font-semibold uppercase text-cuivre-text">Venir à Meknès</p>
-    <h2 class="font-display text-h2 mt-2">Préparer votre voyage</h2>
+    <p class="text-overline font-semibold uppercase text-cuivre-text">Dress code</p>
+    <h2 class="font-display text-h2 mt-2">Élégant, à votre façon</h2>
     <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      Vols, hébergements recommandés, conseils pratiques : un guide complet pour nos invités
-      qui viennent de France sera publié ici. En attendant, une chose à faire dès maintenant —
-      <strong class="text-encre">réserver vos vols vers Fès-Saïss (FEZ)</strong>, l'aéroport le plus proche de Meknès (~45 minutes), pour le week-end du 23 octobre.
+      Tenue de soirée élégante. Caftans, djellabas de fête et tenues traditionnelles
+      sont les bienvenus — portez ce qui vous fait honneur et plaisir.
     </p>
   </div>
 </section>
 
-<!-- RSVP (placeholder S2) -->
+<div class="zellige-divider" aria-hidden="true"></div>
+
+<!-- Venir à Meknès -->
+<section id="venir" class="w-full bg-surface border-y border-sable">
+  <div class="max-w-prose mx-auto px-6 lg:px-8 py-16 lg:py-24">
+    <div class="text-center">
+      <p class="text-overline font-semibold uppercase text-cuivre-text">Venir à Meknès</p>
+      <h2 class="font-display text-h2 mt-2">Préparer votre voyage</h2>
+      <p class="text-body text-ardoise mt-4">
+        Pour nos invités qui viennent de France — le guide complet (hébergements
+        recommandés, bonnes adresses) arrive bientôt.
+      </p>
+    </div>
+    <div class="mt-10 space-y-3">
+      <details class="group bg-ivoire border border-sable rounded-lg">
+        <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
+          En avion <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <div class="px-6 pb-5 text-body text-ardoise">
+          L'aéroport le plus proche est <strong class="text-encre">Fès-Saïss (FEZ)</strong>, à environ 45 minutes
+          de route de Meknès — vols directs depuis Paris et plusieurs villes françaises.
+          Alternatives : Rabat (~1h30) ou Casablanca (~2h30), avec liaison possible en train.
+          <strong class="text-encre">Réservez tôt pour le week-end du 23 octobre.</strong>
+        </div>
+      </details>
+      <details class="group bg-ivoire border border-sable rounded-lg">
+        <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
+          Se loger <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <div class="px-6 pb-5 text-body text-ardoise">
+          Une sélection d'hôtels et de riads recommandés, avec distances jusqu'au Palais Laraki,
+          sera publiée ici très prochainement.
+        </div>
+      </details>
+      <details class="group bg-ivoire border border-sable rounded-lg">
+        <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
+          Se déplacer <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <div class="px-6 pb-5 text-body text-ardoise">
+          Les petits taxis sont économiques et nombreux ; les applications de VTC fonctionnent
+          bien au Maroc. Des précisions (navettes éventuelles, parking) seront ajoutées ici.
+        </div>
+      </details>
+      <details class="group bg-ivoire border border-sable rounded-lg">
+        <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
+          Bon à savoir <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <div class="px-6 pb-5 text-body text-ardoise">
+          Fin octobre à Meknès : journées douces (~24&nbsp;°C), soirées fraîches (~12&nbsp;°C) —
+          prévoyez une veste ou un châle. Monnaie : le dirham (MAD), retraits faciles sur place,
+          paiement en espèces fréquent. Le français est très largement parlé.
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- RSVP (S2) -->
 <section id="rsvp" class="w-full">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
     <p class="text-overline font-semibold uppercase text-cuivre-text">RSVP</p>
     <h2 class="font-display text-h2 mt-2">Confirmer votre présence</h2>
     <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      Le formulaire de confirmation ouvrira prochainement. Vous recevrez un email
+      Le formulaire de confirmation ouvrira prochainement — vous recevrez un email
       dès qu'il sera disponible.
     </p>
   </div>
