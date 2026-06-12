@@ -1,0 +1,18 @@
+/* CSS custom hors utilitaires — direction A · Bleu de Fès */
+
+/* Rendu optique fin de Fraunces (non exprimable en utilitaire Tailwind) */
+.font-display { font-optical-sizing: auto; }
+
+/* Focus visible par défaut (jamais d'outline:none sans remplacement) */
+:focus-visible { outline: 2px solid #1D5FAD; outline-offset: 2px; }
+
+/* Filigrane géométrique (zellige abstrait, ~5 % d'opacité) — séparateur de section */
+.zellige-divider {
+  height: 12px;
+  background-image: repeating-linear-gradient(45deg, rgba(35,46,71,0.07) 0 1px, transparent 1px 12px),
+                    repeating-linear-gradient(-45deg, rgba(35,46,71,0.07) 0 1px, transparent 1px 12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

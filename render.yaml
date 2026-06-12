@@ -1,0 +1,28 @@
+# Blueprint Render — déployer via "New > Blueprint" en pointant ce repo.
+# Domaine : ajouter mariage-maroc.igolen.com dans Settings > Custom Domains du service,
+# puis créer le CNAME chez le registrar (voir README).
+services:
+  - type: web
+    name: mariage-fes
+    runtime: python
+    plan: starter            # ~7 $/mois — pas de mise en veille (le plan free endort le site, ~50 s de réveil pour les invités)
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: ENV
+        value: prod
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mariage-fes-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ACCESS_CODE
+        sync: false          # à saisir dans le dashboard Render (jamais dans le repo)
+
+databases:
+  - name: mariage-fes-db
+    plan: basic-256mb        # ~6 $/mois — la base free EXPIRE après 90 jours (inacceptable : juin → octobre)

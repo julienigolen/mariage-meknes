@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero — variante sans photo (S0) : fond encre uni, photo Palais Laraki en S1 -->
+<section class="w-full bg-encre">
+  <div class="max-w-wide mx-auto px-6 lg:px-8 py-24 lg:py-32 text-center">
+    <p class="text-overline font-semibold uppercase text-cuivre-light">Save the date</p>
+    <h1 class="font-display text-display text-onDark mt-4">Kenza &amp; Julien</h1>
+    <p class="text-body-lg text-onDark-muted mt-6 max-w-prose mx-auto">
+      Après Valence, nous avons la joie de vous inviter à célébrer notre mariage au Maroc,
+      dans la ville de Fès.
+    </p>
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-4 text-onDark">
+      <div><p class="text-overline uppercase text-fes-light">Date</p><p class="font-display text-h3 mt-1">Vendredi 23 octobre 2026</p></div>
+      <div class="hidden sm:block w-px h-12 bg-onDark-muted/30" aria-hidden="true"></div>
+      <div><p class="text-overline uppercase text-fes-light">Lieu</p><p class="font-display text-h3 mt-1">Palais Laraki, Fès</p></div>
+    </div>
+    <a href="#rsvp" class="inline-flex items-center h-12 px-8 mt-12 rounded-md bg-fes text-white font-medium hover:bg-fes-light hover:text-encre transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-fes-light focus-visible:ring-offset-2 focus-visible:ring-offset-encre">
+      Confirmer ma présence — bientôt
+    </a>
+  </div>
+</section>
+
+<div class="zellige-divider" aria-hidden="true"></div>
+
+<!-- Programme (placeholder S1) -->
+<section id="programme" class="w-full">
+  <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
+    <p class="text-overline font-semibold uppercase text-cuivre-text">Programme</p>
+    <h2 class="font-display text-h2 mt-2">Une soirée au Palais Laraki</h2>
+    <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
+      La fête se déroulera entièrement au Palais Laraki, au cœur de la médina de Fès,
+      et se prolongera jusqu'au petit matin. Le déroulé détaillé arrive bientôt.
+    </p>
+    <a href="https://www.google.com/maps?q=Palais+Laraki+F%C3%A8s" target="_blank" rel="noopener"
+       class="inline-flex items-center gap-2 mt-6 text-fes-text font-medium hover:underline">
+      Voir le Palais Laraki sur la carte →
+    </a>
+  </div>
+</section>
+
+<!-- Venir à Fès (placeholder S4) -->
+<section id="venir" class="w-full bg-surface border-y border-sable">
+  <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
+    <p class="text-overline font-semibold uppercase text-cuivre-text">Venir à Fès</p>
+    <h2 class="font-display text-h2 mt-2">Préparer votre voyage</h2>
+    <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
+      Vols, hébergements recommandés, conseils pratiques : un guide complet pour nos invités
+      qui viennent de France sera publié ici. En attendant, une chose à faire dès maintenant —
+      <strong class="text-encre">réserver vos vols vers Fès-Saïss (FEZ)</strong> pour le week-end du 23 octobre.
+    </p>
+  </div>
+</section>
+
+<!-- RSVP (placeholder S2) -->
+<section id="rsvp" class="w-full">
+  <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
+    <p class="text-overline font-semibold uppercase text-cuivre-text">RSVP</p>
+    <h2 class="font-display text-h2 mt-2">Confirmer votre présence</h2>
+    <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
+      Le formulaire de confirmation ouvrira prochainement. Vous recevrez un email
+      dès qu'il sera disponible.
+    </p>
+  </div>
+</section>
+
+{% endblock %}

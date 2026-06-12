@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>{% block title %}Kenza &amp; Julien — Fès, 23 octobre 2026{% endblock %}</title>
+
+  <!-- Polices : Fraunces (titres, préchargée — cf. charte OWP §12) + Plus Jakarta Sans (corps) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* Tokens — direction A · Bleu de Fès (contrastes WCAG AA calculés, cf. docs/PROPOSITION §2.2) */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivoire:  '#FAF6EE',
+            surface: '#FFFCF5',
+            sable:   '#E8DFCE',
+            encre:   '#232E47',
+            ardoise: '#5A6072',
+            fes:    { DEFAULT: '#1D5FAD', text: '#174C8C', light: '#9FBEE8' },
+            cuivre: { DEFAULT: '#A4581F', text: '#8C4A19', light: '#E0A878' },
+            onDark: { DEFAULT: '#FAF6EE', muted: '#C9CEDD' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          fontSize: {
+            display: ['3.5rem', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+            h1: ['2.5rem', { lineHeight: '1.1', letterSpacing: '-0.015em' }],
+            h2: ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.01em' }],
+            h3: ['1.5rem', { lineHeight: '1.2' }],
+            h4: ['1.25rem', { lineHeight: '1.3' }],
+            overline: ['0.875rem', { lineHeight: '1.4', letterSpacing: '0.08em' }],
+            'body-lg': ['1.125rem', { lineHeight: '1.7' }],
+            body: ['1rem', { lineHeight: '1.7' }],
+            small: ['0.875rem', { lineHeight: '1.6' }],
+            caption: ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
+          },
+          borderRadius: { sm: '4px', md: '8px', lg: '14px', xl: '20px' },
+          boxShadow: {
+            sm: '0 1px 2px rgba(35,46,71,0.06)',
+            md: '0 4px 16px rgba(35,46,71,0.08)',
+            lg: '0 12px 32px rgba(35,46,71,0.10)',
+          },
+          maxWidth: { prose: '720px', content: '1200px', wide: '1320px' },
+          transitionTimingFunction: { premium: 'cubic-bezier(0.22,1,0.36,1)' },
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="bg-ivoire text-encre font-body text-body min-h-screen flex flex-col">
+
+  {% block header %}
+  <header class="bg-surface border-b-2 border-sable sticky top-0 z-40">
+    <div class="max-w-content mx-auto px-6 lg:px-8 h-[72px] flex items-center justify-between">
+      <a href="/" class="flex flex-col" aria-label="Kenza et Julien — accueil">
+        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-cuivre-text">&amp;</span> Julien</span>
+        <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">Fès · 23 octobre 2026</span>
+      </a>
+      <nav class="hidden sm:flex items-center gap-6 text-small font-medium">
+        <a href="/#programme" class="text-encre hover:text-fes-text">Programme</a>
+        <a href="/#venir" class="text-encre hover:text-fes-text">Venir à Fès</a>
+        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-fes text-white hover:bg-fes-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-fes focus-visible:ring-offset-2">RSVP</a>
+      </nav>
+    </div>
+  </header>
+  {% endblock %}
+
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+  <footer class="bg-encre text-onDark-muted">
+    <div class="max-w-content mx-auto px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="font-display text-h5 text-onDark">Kenza &amp; Julien</p>
+      <p class="text-small">Palais Laraki, Fès · vendredi 23 octobre 2026</p>
+    </div>
+  </footer>
+  {% endblock %}
+
+</body>
+</html>
