@@ -1,7 +1,7 @@
 # Site mariage Meknès — Proposition (design, fonctionnalités, intégration, plan)
 
 > Mariage Kenza & Julien · **Meknès, vendredi 23 octobre 2026** · Site invités FR · accès par code commun.
-> Statut : **arbitré par le Patron le 2026-06-12** — direction **A · Bleu zellige**, hébergement **Render**, domaine **mariage-maroc.igolen.com**, mariage entièrement au **Palais Laraki** (jusqu'au petit matin, déroulé détaillé à venir). S0 livré (socle : porte à code, layout tokens, modèles, Alembic, render.yaml).
+> Statut : **arbitré par le Patron le 2026-06-12**, **palette révisée le 2026-07-27** — direction **T1 · Terre de Meknès** (remplace A · Bleu zellige, cf. §2.1 bis), hébergement **Render**, domaine **mariage-maroc.igolen.com**, mariage entièrement au **Palais Laraki** (jusqu'au petit matin, déroulé détaillé à venir). S0 livré (socle : porte à code, layout tokens, modèles, Alembic, render.yaml).
 > Référence reprise : site France https://julienigolen.github.io/mariage/ (one-page : hero, histoire, programme, adresses/accès, dress code, RSVP Formspree).
 
 ---
@@ -31,33 +31,60 @@ Pour la réutilisation (gain de temps réel) :
 
 | Direction | Idée | Implication |
 |---|---|---|
-| **A · Bleu zellige** ⭐ recommandée | Ivoire chaud + encre bleu nuit + accent bleu zellige, cuivre en seconde voix. Bleu des zelliges des villes impériales, lumière d'octobre. | Se distingue nettement du site France (autre événement, autre lieu), culturellement juste sans cliché. Contrastes tous AA (calculés). |
+| **A · Bleu zellige** ~~⭐ recommandée~~ | Ivoire chaud + encre bleu nuit + accent bleu zellige, cuivre en seconde voix. | **Abandonnée le 2026-07-27** — voir §2.1 bis. Contrastes AA corrects sur le papier, mais palette froide incompatible avec l'imagerie réelle du site. |
 | **B · Médina d'or** | Continuité du site France : champagne, safran, chic lumineux. | Cohérence entre les deux sites, mais risque « copie » ; ⚠ blanc/safran `#B07014` = 4.06:1 (échec AA) → CTA à assombrir si retenue. |
 | **C · Jardin d'Andalou** | Vert zellige profond + ivoire + laiton. Référence aux jardins/riads. | Très élégant (contrastes excellents : 8.9–9.6:1) mais plus sombre, moins festif. |
 
-### 2.2 Palette A · Bleu zellige (contrastes WCAG calculés sur ivoire `#FAF6EE`)
+### 2.1 bis Pourquoi A a été abandonnée (2026-07-27)
+
+L'intégration de la photo de **Bab Mansour** en hero a révélé un conflit que la charte n'avait pas anticipé : elle avait été arbitrée **sans image de référence**, sur une intuition (« le bleu des zelliges des villes impériales »).
+
+Mesure de la colorimétrie réelle du visuel (k-means sur les pixels du monument) :
+
+| Famille de teintes | Part de la surface | Saturation moyenne |
+|---|---|---|
+| Ocre / or (20–50°) | **73,7 %** | 32 % |
+| Rouge / brun (0–20°) | 9,2 % | 33 % |
+| Olive (50–90°) | 10,6 % | 10 % |
+| Vert (90–160°) | 3,3 % | 10 % |
+| Turquoise + bleu (160–260°) | 2,0 % | 6–8 % |
+
+**Verts et bleus à saturation > 30 % : 0,04 % de l'image.** Le zellige de la façade paraît vert-de-gris à l'œil, mais il est colorimétriquement quasi neutre. Poser un voile bleu-nuit `#232E47` sur une façade ocre produit un rendu gris terne, et aucun réglage de dosage ne le corrige — le problème est la teinte, pas l'opacité. Les accents pastels de A (`cuivre.light`, `zellige.light`) tombaient par ailleurs à 1,6–3,4:1 sur cette image, sous le seuil AA.
+
+**Décision Patron : bascule sur T1 · Terre de Meknès**, palette dérivée de la colorimétrie mesurée.
+
+### 2.2 Palette T1 · Terre de Meknès (contrastes WCAG calculés sur ivoire `#FBF7F0`)
 
 | Token | Hex | Usage | Contraste |
 |---|---|---|---|
-| `ivoire` | `#FAF6EE` | Fond de page | base |
-| `surface` | `#FFFCF5` | Cartes, formulaires | base |
-| `sable` | `#E8DFCE` | Bordures, séparateurs | base |
-| `encre` | `#232E47` | Texte principal · sections sombres | **12.54:1** — AAA |
-| `ardoise` | `#5A6072` | Texte secondaire | **5.81:1** — AA |
-| `zellige` (accent) | `#1D5FAD` | CTA primaire (texte blanc dessus : **6.38:1** AA), focus | **5.92:1** — AA |
-| `zellige.text` | `#174C8C` | Liens, accents texte | **7.96:1** — AAA |
-| `cuivre` | `#A4581F` | Seconde voix festive (badges, icônes) | **4.88:1** — AA |
-| `cuivre.text` | `#8C4A19` | Variante texte du cuivre | **6.27:1** — AA |
-| `zellige.light` | `#9FBEE8` | Accent sur fond sombre encre | **7.09:1** sur encre — AAA |
-| `cuivre.light` | `#E0A878` | Cuivre sur fond sombre | **6.46:1** sur encre — AA |
+| `ivoire` | `#FBF7F0` | Fond de page | base |
+| `surface` | `#FFFDF8` | Cartes, formulaires | base |
+| `sable` | `#E9DDC9` | Bordures, séparateurs · accent clair sur photo | base · **11.63:1** sur encre — AAA |
+| `encre` | `#2E2117` | Texte principal · sections sombres · voile hero | **14.61:1** — AAA |
+| `ardoise` | `#6A5844` | Texte secondaire | **6.36:1** — AA |
+| `terre` (accent) | `#9B4A2A` | CTA primaire (texte blanc dessus : **6.16:1** AA), focus | **5.77:1** — AA |
+| `terre.text` | `#823E22` | Liens, accents texte | **7.39:1** — AAA |
+| `terre.light` | `#E3A98C` | Accent sur fond sombre encre | **7.67:1** sur encre — AAA |
+| `laiton` | `#8A6A18` | Seconde voix festive (badges, icônes) | **4.73:1** — AA |
+| `laiton.text` | `#75590F` | Variante texte du laiton | **6.16:1** — AA |
+| `laiton.light` | `#E8C87E` | Laiton sur fond sombre | **9.65:1** sur encre — AAA |
+| `onDark` | `#FAF4EA` | Texte sur sections sombres | **14.26:1** sur encre — AAA |
+| `onDark.muted` | `#D5C6B2` | Texte secondaire sur sombre | **9.32:1** sur encre — AAA |
+| `danger` | `#9E2B1E` | Erreur (bordure de champ, message) | **6.98:1** — AA |
+| `danger.text` | `#8E2318` | Message d'erreur | **8.18:1** — AA |
+| `danger.light` | `#F0A99E` | Erreur sur fond sombre | **8.08:1** sur encre — AAA |
+
+**Note sur `danger`** : sous la charte A, la couleur d'erreur était `cuivre` détourné. Impossible ici — `terre` porte le CTA primaire, une erreur de la même teinte que le bouton d'action est un contresens. D'où un token dédié, rouge profond (teinte 5°) qui reste dans la famille chaude.
 
 Règles reprises de la charte OWP : un seul accent par zone visuelle, sections sombres (`encre`) pour rythmer, jamais d'accent foncé sur fond sombre (basculer sur `.light`), voile sombre obligatoire sous tout texte posé sur photo.
+
+**Règle ajoutée (2026-07-27)** : le voile posé sur une photo doit être teinté avec l'`encre` de la charte, et l'`encre` doit appartenir à la famille chromatique de l'imagerie du site. Toute nouvelle direction de palette se valide **contre une image réelle**, pas dans l'abstrait.
 
 ### 2.3 Typographie & imagerie
 
 - **Titres Fraunces, corps Plus Jakarta Sans** — réutilisés d'OWP (rendu déjà validé, zéro décision à reprendre). L'identité est portée par la couleur et l'image, pas par une nouvelle typo.
-- Échelle typo, espacements, rayons, ombres, motion : **reprendre les tokens §3/§4/§8/§11 de la charte OWP tels quels** (ombres re-teintées encre `rgba(35,46,71,…)`).
-- **Imagerie** : photos chaudes de Meknès (médina, zellige, lumière dorée) + vos photos de couple. Motif zellige autorisé uniquement en **filigrane géométrique fin** (séparateurs, fond de section à ~5 % d'opacité) — jamais en tapisserie orientaliste.
+- Échelle typo, espacements, rayons, ombres, motion : **reprendre les tokens §3/§4/§8/§11 de la charte OWP tels quels** (ombres re-teintées encre `rgba(46,33,23,…)`).
+- **Imagerie** : photos chaudes de Meknès (médina, zellige, lumière dorée) + vos photos de couple. Le hero porte **Bab Mansour** (façade détourée sur fond transparent, `hero.webp`/`hero.avif` 1920×980) : la porte occupe le haut de la section, le dégradé `encre` se resserre vers le bas pour porter le texte. Motif zellige autorisé uniquement en **filigrane géométrique fin** (séparateurs, fond de section à ~7 % d'opacité) — jamais en tapisserie orientaliste.
 - Interdits identiques à la charte : émojis-icônes (Lucide partout), clichés mariage, pages nues.
 
 ---

@@ -2,7 +2,7 @@
 
 Site invités (FR) protégé par code commun, avec RSVP intégré et admin de la liste d'invités.
 Stack : FastAPI + Jinja2 + Tailwind CDN + HTMX + Postgres (patterns repris d'OWP).
-Design : direction **A · Bleu zellige** — cf. `docs/PROPOSITION_site_mariage_meknes.md`.
+Design : direction **T1 · Terre de Meknès** (palette dérivée de la colorimétrie de Bab Mansour, remplace « A · Bleu zellige » depuis le 27/07/2026) — cf. `docs/PROPOSITION_site_mariage_meknes.md` §2.1 bis et §2.2.
 
 ## Lancer en local
 

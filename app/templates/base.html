@@ -14,19 +14,24 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    /* Tokens — direction A · Bleu zellige (contrastes WCAG AA calculés, cf. docs/PROPOSITION §2.2) */
+    /* Tokens — direction T1 · Terre de Meknès (contrastes WCAG AA calculés, cf. docs/PROPOSITION §2.2).
+       Palette dérivée de la colorimétrie de Bab Mansour : 74 % de la façade en ocre/or (teinte 20-50°),
+       9 % en brun-rouge, verts/bleus saturés < 0,1 %. */
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            ivoire:  '#FAF6EE',
-            surface: '#FFFCF5',
-            sable:   '#E8DFCE',
-            encre:   '#232E47',
-            ardoise: '#5A6072',
-            zellige:    { DEFAULT: '#1D5FAD', text: '#174C8C', light: '#9FBEE8' },
-            cuivre: { DEFAULT: '#A4581F', text: '#8C4A19', light: '#E0A878' },
-            onDark: { DEFAULT: '#FAF6EE', muted: '#C9CEDD' },
+            ivoire:  '#FBF7F0',
+            surface: '#FFFDF8',
+            sable:   '#E9DDC9',
+            encre:   '#2E2117',
+            ardoise: '#6A5844',
+            terre:   { DEFAULT: '#9B4A2A', text: '#823E22', light: '#E3A98C' },
+            laiton:  { DEFAULT: '#8A6A18', text: '#75590F', light: '#E8C87E' },
+            /* Erreur : token dédié. Avant, `cuivre` était détourné en couleur d'erreur —
+               impossible ici, `terre` porte déjà le CTA primaire. */
+            danger:  { DEFAULT: '#9E2B1E', text: '#8E2318', light: '#F0A99E' },
+            onDark:  { DEFAULT: '#FAF4EA', muted: '#D5C6B2' },
           },
           fontFamily: {
             display: ['Fraunces', 'Georgia', 'serif'],
@@ -46,9 +51,9 @@
           },
           borderRadius: { sm: '4px', md: '8px', lg: '14px', xl: '20px' },
           boxShadow: {
-            sm: '0 1px 2px rgba(35,46,71,0.06)',
-            md: '0 4px 16px rgba(35,46,71,0.08)',
-            lg: '0 12px 32px rgba(35,46,71,0.10)',
+            sm: '0 1px 2px rgba(46,33,23,0.06)',
+            md: '0 4px 16px rgba(46,33,23,0.08)',
+            lg: '0 12px 32px rgba(46,33,23,0.10)',
           },
           maxWidth: { prose: '720px', content: '1200px', wide: '1320px' },
           transitionTimingFunction: { premium: 'cubic-bezier(0.22,1,0.36,1)' },
@@ -65,13 +70,13 @@
   <header class="bg-surface border-b-2 border-sable sticky top-0 z-40">
     <div class="max-w-content mx-auto px-6 lg:px-8 h-[72px] flex items-center justify-between">
       <a href="/" class="flex flex-col" aria-label="Kenza et Julien — accueil">
-        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-cuivre-text">&amp;</span> Julien</span>
+        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-laiton-text">&amp;</span> Julien</span>
         <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">Meknès · 23 octobre 2026</span>
       </a>
       <nav class="hidden sm:flex items-center gap-6 text-small font-medium">
-        <a href="/#programme" class="text-encre hover:text-zellige-text">Programme</a>
-        <a href="/#venir" class="text-encre hover:text-zellige-text">Venir à Meknès</a>
-        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-zellige text-white hover:bg-zellige-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2">RSVP</a>
+        <a href="/#programme" class="text-encre hover:text-terre-text">Programme</a>
+        <a href="/#venir" class="text-encre hover:text-terre-text">Venir à Meknès</a>
+        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-terre text-white hover:bg-terre-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-terre focus-visible:ring-offset-2">RSVP</a>
       </nav>
     </div>
   </header>

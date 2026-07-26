@@ -7,7 +7,7 @@
 <section class="min-h-screen w-full bg-encre flex items-center justify-center px-6">
   <div class="w-full max-w-md">
     <div class="text-center mb-8">
-      <p class="text-overline font-semibold uppercase text-cuivre-light">Meknès · 23 octobre 2026</p>
+      <p class="text-overline font-semibold uppercase text-laiton-light">Meknès · 23 octobre 2026</p>
       <h1 class="font-display text-h1 text-onDark mt-2">Kenza &amp; Julien</h1>
       <p class="text-body text-onDark-muted mt-3">Ce site est réservé à nos invités.</p>
     </div>
@@ -15,13 +15,13 @@
     <form method="post" action="/entree" class="bg-surface rounded-xl shadow-lg p-8">
       <label for="code" class="block text-small font-medium text-ardoise mb-2">Code d'invitation</label>
       <input id="code" name="code" type="text" required autofocus autocomplete="off"
-             class="w-full h-12 px-4 rounded-md bg-ivoire border {{ 'border-cuivre' if error else 'border-sable' }} text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
+             class="w-full h-12 px-4 rounded-md bg-ivoire border {{ 'border-danger' if error else 'border-sable' }} text-encre placeholder-ardoise focus:border-terre focus:ring-2 focus:ring-terre/30 focus:outline-none"
              placeholder="Le code figure sur votre invitation">
       {% if error %}
-      <p class="text-small text-cuivre-text mt-2">Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.</p>
+      <p class="text-small text-danger-text mt-2">Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.</p>
       {% endif %}
       <button type="submit"
-              class="mt-6 w-full h-12 rounded-md bg-zellige text-white font-medium hover:bg-zellige-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2">
+              class="mt-6 w-full h-12 rounded-md bg-terre text-white font-medium hover:bg-terre-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-terre focus-visible:ring-offset-2">
         Entrer
       </button>
     </form>
