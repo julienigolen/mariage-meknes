@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Bienvenue — Kenza &amp; Julien{% endblock %}
+{% import "components/lang_switch.html" as ls %}
+{% block title %}{{ texts.gate_page_title }}{% endblock %}
 {% block header %}{% endblock %}
 {% block footer %}{% endblock %}
 
@@ -10,27 +11,34 @@
      wrapper `.carton` de base.html qui porte le format. -->
 <section class="w-full bg-hero-sable flex items-center justify-center px-6 py-20 lg:py-28">
   <div class="w-full max-w-[380px]">
+    <!-- Sélecteur de langue en tout premier (charte §5.10 bis) : c'est la toute
+         première décision de l'invité, avant même de lire le lockup. -->
+    <div class="flex justify-center mb-6">
+      {{ ls.lang_switch(lang, '/entree') }}
+    </div>
     <div class="text-center mb-8">
-      <p class="text-overline font-semibold uppercase text-zellige-text">Meknès · 23 octobre 2026</p>
+      <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.gate_overline }}</p>
       <h1 class="font-display text-h1 text-encre mt-2">Kenza <span class="text-vert-text">&amp;</span> Julien</h1>
       <div class="zellige-rule max-w-[160px] mx-auto mt-4" aria-hidden="true"></div>
-      <p class="text-body text-ardoise mt-4">Ce site est réservé à nos invités.</p>
+      <p class="text-body text-ardoise mt-4">{{ texts.gate_intro }}</p>
     </div>
 
     <form method="post" action="/entree" class="bg-surface border border-bord rounded-xl shadow-md p-8">
-      <label for="code" class="block text-small font-semibold text-encre mb-2">Code d'invitation</label>
+      <label for="code" class="block text-small font-semibold text-encre mb-2">{{ texts.gate_code_label }}</label>
       <!-- Bordure `bord.fort` : 3.40:1 sur surface, seuil UI de 3:1 atteint (charte §5.2).
-           L'ancienne bordure `sable` ne valait que 1.5:1 — le champ n'avait pas de contour perceptible. -->
-      <input id="code" name="code" type="text" required autofocus autocomplete="off"
+           L'ancienne bordure `sable` ne valait que 1.5:1 — le champ n'avait pas de contour perceptible.
+           dir="ltr" explicite (charte §4.4/§9) : un code d'invitation est un contenu latin/numérique,
+           il ne doit jamais s'inverser même une fois l'arabe branché sur le reste de la page. -->
+      <input id="code" name="code" type="text" required autofocus autocomplete="off" dir="ltr"
              class="w-full h-12 px-4 rounded-md bg-surface border {{ 'border-danger' if error else 'border-bord-fort' }} text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
              {% if error %}aria-describedby="code-error"{% endif %}
-             placeholder="Le code figure sur votre invitation">
+             placeholder="{{ texts.gate_code_placeholder }}">
       {% if error %}
-      <p id="code-error" role="alert" class="text-small text-danger-text mt-2">Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.</p>
+      <p id="code-error" role="alert" class="text-small text-danger-text mt-2">{{ texts.gate_error }}</p>
       {% endif %}
       <button type="submit"
               class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
-        Entrer
+        {{ texts.gate_submit }}
       </button>
     </form>
   </div>

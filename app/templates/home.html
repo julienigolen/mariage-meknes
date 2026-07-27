@@ -10,29 +10,30 @@
   <!-- Rythme resserré (charte §5.3) : le bloc de tête flottait, la façade arrivait trop bas.
        L'aération vient du blanc autour du carton, pas de l'intérieur du bloc. -->
   <div class="max-w-wide mx-auto px-6 lg:px-8 pt-8 lg:pt-12 text-center">
-    <p class="text-overline font-semibold uppercase text-zellige-text">Save the date</p>
+    <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.hero_overline }}</p>
     <h1 class="font-display text-display text-encre mt-1">Kenza <span class="text-vert-text">&amp;</span> Julien</h1>
     <div class="zellige-rule max-w-[220px] mx-auto mt-3" aria-hidden="true"></div>
     <p class="text-body text-ardoise mt-4 max-w-[52ch] mx-auto">
-      Nous avons la joie de vous convier au Maroc
-      pour célébrer notre mariage, entourés de nos deux familles et de nos deux cultures.
+      {{ texts.hero_intro }}
     </p>
     <!-- Date, lieu et compte à rebours sur une seule ligne : trois informations de même
-         nature (les coordonnées de l'événement), elles n'ont pas à s'empiler. -->
+         nature (les coordonnées de l'événement), elles n'ont pas à s'empiler.
+         dir="ltr" sur le compte à rebours (charte §4.4/§9) : "J−88" est un contenu
+         numérique, isolé même une fois la page en arabe. -->
     <div class="mt-5 flex flex-col sm:flex-row items-center justify-center gap-x-8 gap-y-3">
-      <div><p class="text-overline uppercase text-ardoise">Date</p><p class="font-display text-h4 text-encre mt-0.5">Vendredi 23 octobre 2026</p></div>
+      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_date_label }}</p><p class="font-display text-h4 text-encre mt-0.5">{{ texts.hero_date_value }}</p></div>
       <div class="hidden sm:block w-px h-9 bg-bord" aria-hidden="true"></div>
-      <div><p class="text-overline uppercase text-ardoise">Lieu</p><p class="font-display text-h4 text-encre mt-0.5">Palais Laraki, Meknès</p></div>
+      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_lieu_label }}</p><p class="font-display text-h4 text-encre mt-0.5">{{ texts.hero_lieu_value }}</p></div>
       {% if days_left > 0 %}
       <div class="hidden sm:block w-px h-9 bg-bord" aria-hidden="true"></div>
-      <div><p class="text-overline uppercase text-ardoise">Compte à rebours</p><p class="font-display text-h4 text-or-text mt-0.5">J−{{ days_left }}</p></div>
+      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_countdown_label }}</p><p class="font-display text-h4 text-or-text mt-0.5" dir="ltr">{{ texts.hero_countdown_prefix }}{{ days_left }}</p></div>
       {% endif %}
     </div>
     <div class="mt-6">
       <!-- Libellé verbal obligatoire sur un aplat vert plein (charte §2.2) :
            c'est ce qui empêche le bouton d'être lu comme un état « déjà confirmé ». -->
-      <a href="#rsvp" class="inline-flex items-center h-12 px-8 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
-        Confirmer ma présence — bientôt
+      <a href="/rsvp" class="inline-flex items-center h-12 px-8 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
+        {{ texts.hero_cta }}
       </a>
     </div>
   </div>
@@ -52,28 +53,22 @@
 <section id="programme" class="w-full bg-dune">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24">
     <div class="text-center">
-      <p class="text-overline font-semibold uppercase text-zellige-text">Programme</p>
-      <h2 class="font-display text-h2 mt-2">Une soirée au Palais Laraki</h2>
-      <p class="text-small text-ardoise mt-3">Horaires indicatifs — le déroulé précis sera confirmé ici.</p>
+      <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.programme_overline }}</p>
+      <h2 class="font-display text-h2 mt-2">{{ texts.programme_title }}</h2>
     </div>
     <ol class="mt-12 max-w-prose mx-auto space-y-0">
-      {% for time, title, desc in [
-        ('19h00', 'Accueil des invités', 'Thé, pâtisseries et retrouvailles dans les salons du palais.'),
-        ('20h30', 'Entrée des mariés', 'Le moment où la fête commence vraiment.'),
-        ('22h00', 'Dîner', 'Un dîner aux saveurs marocaines, servi à table.'),
-        ('Jusqu’au petit matin', 'La fête', 'Musique et danse — prévoyez des chaussures confortables.'),
-      ] %}
+      {% for n in [1, 2, 3, 4] %}
       <!-- Seule zone du site où deux voix cohabitent (§5.5) : le jalon est vert (déroulé),
            l'horaire est bleu (écriture) — ils portent deux choses différentes. -->
       <li class="relative flex gap-6 pb-10 last:pb-0">
         <div class="flex flex-col items-center" aria-hidden="true">
           <span class="w-3 h-3 rounded-full bg-vert mt-1.5 shrink-0"></span>
-          {% if not loop.last %}<span class="w-px flex-1 bg-bord"></span>{% endif %}
+          {% if n != 4 %}<span class="w-px flex-1 bg-bord"></span>{% endif %}
         </div>
         <div>
-          <p class="text-overline font-semibold uppercase text-zellige-text">{{ time }}</p>
-          <h3 class="font-display text-h4 text-encre mt-1">{{ title }}</h3>
-          <p class="text-body text-ardoise mt-1">{{ desc }}</p>
+          <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts['programme_item%d_time' % n] }}</p>
+          <h3 class="font-display text-h4 text-encre mt-1">{{ texts['programme_item%d_title' % n] }}</h3>
+          <p class="text-body text-ardoise mt-1">{{ texts['programme_item%d_desc' % n] }}</p>
         </div>
       </li>
       {% endfor %}
@@ -85,25 +80,24 @@
      c'était le second bloc sombre de la page, supprimé en v2.0. -->
 <section id="lieu" class="w-full bg-sable">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
-    <p class="text-overline font-semibold uppercase text-zellige-text">Le lieu</p>
-    <h2 class="font-display text-h2 text-encre mt-2">Palais Laraki, Meknès</h2>
+    <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.lieu_overline }}</p>
+    <h2 class="font-display text-h2 text-encre mt-2">{{ texts.lieu_title }}</h2>
     <!-- Photo du VRAI lieu depuis le 2026-07-27 (elle montrait Bab Mansour jusque-là, qui
          n'est pas le lieu du mariage). Nocturne réétalonnée : c'est l'exception unique
          prévue par la charte §7.4 — le mariage lui-même est nocturne (19h → petit matin).
          Rectangle plein, donc `rounded-lg` + ombre : c'est une photo, plus une silhouette
          détourée (l'ombre aurait suivi le cadre au lieu du sujet). -->
     <img src="{{ asset('/static/img/lieu.webp') }}"
-         alt="L'entrée du Palais Laraki illuminée le soir, portail sculpté et candélabres"
+         alt="{{ texts.lieu_img_alt }}"
          width="1536" height="768" loading="lazy"
          class="mx-auto mt-10 w-full max-w-3xl rounded-lg shadow-md"
          onerror="this.remove()">
     <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      Toute la soirée se déroule au même endroit — aucun déplacement à prévoir une fois sur place.
-      Les informations d'accès détaillées seront publiées ici.
+      {{ texts.lieu_intro }}
     </p>
     <a href="https://www.google.com/maps?q=Palais+Laraki+Mekn%C3%A8s" target="_blank" rel="noopener"
        class="inline-flex items-center h-12 px-8 mt-8 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-sable">
-      Voir sur Google Maps
+      {{ texts.lieu_maps_cta }}
     </a>
   </div>
 </section>
@@ -111,11 +105,10 @@
 <!-- Dress code -->
 <section id="dresscode" class="w-full bg-dune">
   <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
-    <p class="text-overline font-semibold uppercase text-zellige-text">Dress code</p>
-    <h2 class="font-display text-h2 mt-2">Élégant, à votre façon</h2>
+    <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.dresscode_overline }}</p>
+    <h2 class="font-display text-h2 mt-2">{{ texts.dresscode_title }}</h2>
     <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      Tenue de soirée élégante. Caftans, djellabas de fête et tenues traditionnelles
-      sont les bienvenus — portez ce qui vous fait honneur et plaisir.
+      {{ texts.dresscode_text }}
     </p>
   </div>
 </section>
@@ -126,66 +119,38 @@
 <section id="venir" class="w-full bg-surface border-y border-bord">
   <div class="max-w-prose mx-auto px-6 lg:px-8 py-16 lg:py-24">
     <div class="text-center">
-      <p class="text-overline font-semibold uppercase text-zellige-text">Venir à Meknès</p>
-      <h2 class="font-display text-h2 mt-2">Préparer votre voyage</h2>
+      <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.guide_overline }}</p>
+      <h2 class="font-display text-h2 mt-2">{{ texts.guide_title }}</h2>
       <p class="text-body text-ardoise mt-4">
-        Pour nos invités qui viennent de France — le guide complet (hébergements
-        recommandés, bonnes adresses) arrive bientôt.
+        {{ texts.guide_intro }}
       </p>
     </div>
     <div class="mt-10 space-y-3">
       <details class="group bg-dune border border-bord rounded-lg">
         <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
-          En avion <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+          {{ texts.guide_avion_title }} <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
         </summary>
         <div class="px-6 pb-5 text-body text-ardoise">
-          L'aéroport le plus proche est <strong class="text-encre">Fès-Saïss (FEZ)</strong>, à environ 45 minutes
-          de route de Meknès — vols directs depuis Paris et plusieurs villes françaises.
-          Alternatives : Rabat (~1h30) ou Casablanca (~2h30), avec liaison possible en train.
-          <strong class="text-encre">Réservez tôt pour le week-end du 23 octobre.</strong>
+          {{ texts.guide_avion_text | safe }}
         </div>
       </details>
       <details class="group bg-dune border border-bord rounded-lg">
         <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
-          Se loger <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+          {{ texts.guide_loger_title }} <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
         </summary>
         <div class="px-6 pb-5 text-body text-ardoise">
-          Une sélection d'hôtels et de riads recommandés, avec distances jusqu'au Palais Laraki,
-          sera publiée ici très prochainement.
+          {{ texts.guide_loger_text }}
         </div>
       </details>
       <details class="group bg-dune border border-bord rounded-lg">
         <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
-          Se déplacer <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
+          {{ texts.guide_savoir_title }} <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
         </summary>
         <div class="px-6 pb-5 text-body text-ardoise">
-          Les petits taxis sont économiques et nombreux ; les applications de VTC fonctionnent
-          bien au Maroc. Des précisions (navettes éventuelles, parking) seront ajoutées ici.
-        </div>
-      </details>
-      <details class="group bg-dune border border-bord rounded-lg">
-        <summary class="cursor-pointer list-none px-6 py-4 font-medium text-encre flex justify-between items-center">
-          Bon à savoir <span class="text-zellige-text transition-transform duration-150 group-open:rotate-45" aria-hidden="true">+</span>
-        </summary>
-        <div class="px-6 pb-5 text-body text-ardoise">
-          Fin octobre à Meknès : journées douces (~24&nbsp;°C), soirées fraîches (~12&nbsp;°C) —
-          prévoyez une veste ou un châle. Monnaie : le dirham (MAD), retraits faciles sur place,
-          paiement en espèces fréquent. Le français est très largement parlé.
+          {{ texts.guide_savoir_text | safe }}
         </div>
       </details>
     </div>
-  </div>
-</section>
-
-<!-- RSVP (S2) -->
-<section id="rsvp" class="w-full bg-dune">
-  <div class="max-w-content mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center">
-    <p class="text-overline font-semibold uppercase text-zellige-text">RSVP</p>
-    <h2 class="font-display text-h2 mt-2">Confirmer votre présence</h2>
-    <p class="text-body text-ardoise mt-4 max-w-prose mx-auto">
-      Le formulaire de confirmation ouvrira prochainement — vous recevrez un email
-      dès qu'il sera disponible.
-    </p>
   </div>
 </section>
 

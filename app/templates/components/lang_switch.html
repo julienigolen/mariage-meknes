@@ -1,0 +1,22 @@
+{#- Sélecteur de langue — charte_graphique.md §5.10 bis.
+    3 pilules prévues à terme (FR/EN/AR), 2 pour l'instant (AR pas encore traduit,
+    charte §4.4 — décision Patron 2026-07-28). Codes courts en latin dans les deux
+    cas (voir §5.10 bis : lisibles même si la police de la langue cible n'est pas
+    encore chargée), aria-label complet pour le lecteur d'écran.
+
+    Piste : bg-surface border border-bord rounded-full p-1, pilule active en vert
+    plein (précédent : le switch §5.2, pas le CTA à verbe ni le badge de statut).
+    Chaque pilule fait 44px de haut mini (règle §5, aucune exception). -#}
+{% macro lang_switch(current_lang, next_url) %}
+<div class="inline-flex gap-1 bg-surface border border-bord rounded-full p-1" role="group" aria-label="Choisir la langue / Choose language">
+  {% for code, label, name in [('fr', 'FR', 'Français'), ('en', 'EN', 'English')] %}
+  <a href="/set-lang?lang={{ code }}&next={{ next_url }}"
+     aria-label="{{ name }}"
+     aria-current="{{ 'true' if current_lang == code else 'false' }}"
+     class="inline-flex items-center justify-center h-11 px-4 rounded-full text-small font-semibold transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface
+            {{ 'bg-vert text-white' if current_lang == code else 'text-ardoise hover:bg-sable' }}">
+    {{ label }}
+  </a>
+  {% endfor %}
+</div>
+{% endmacro %}

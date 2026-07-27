@@ -9,12 +9,14 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import gate, site
+from app.routers import gate, lang, rsvp, site
 
 app = FastAPI(title="Mariage Kenza & Julien — Meknès", docs_url=None, redoc_url=None, openapi_url=None)
 
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
 app.include_router(gate.router)
+app.include_router(lang.router)
+app.include_router(rsvp.router)
 app.include_router(site.router)
 
 if settings.env == "dev":

@@ -7,3 +7,4 @@ psycopg[binary]>=3.1
 itsdangerous>=2.1
 python-multipart>=0.0.9
 pydantic-settings>=2.2
+openpyxl>=3.1  # lecture de l'Excel invités (scripts/import_guests.py)

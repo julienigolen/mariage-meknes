@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{ texts.rsvp_title }} — Kenza &amp; Julien{% endblock %}
+
+{% block content %}
+<!-- RSVP — identification par téléphone (proposition_produit.md §2 point 4).
+     MVP : pas de goodies, pas d'email de confirmation. Le formulaire reste
+     toujours modifiable (§5.11) : resoumettre un numéro déjà répondu
+     pré-remplit la réponse existante. -->
+<section class="w-full bg-dune">
+  <div class="max-w-prose mx-auto px-6 lg:px-8 py-16 lg:py-24">
+    <div class="text-center mb-10">
+      <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.rsvp_overline }}</p>
+      <h1 class="font-display text-h2 mt-2">{{ texts.rsvp_title }}</h1>
+      {% if step != "success" %}
+      <p class="text-small text-ardoise mt-3">{{ texts.rsvp_intro }}</p>
+      {% endif %}
+    </div>
+
+    {% if step == "phone" %}
+    <form method="post" action="/rsvp/lookup" class="bg-surface border border-bord rounded-xl shadow-md p-8 max-w-[420px] mx-auto">
+      <label for="phone" class="block text-small font-semibold text-encre mb-2">{{ texts.rsvp_phone_label }}</label>
+      <!-- dir="ltr" (charte §4.4/§9) : un numéro de téléphone est un contenu latin/numérique. -->
+      <input id="phone" name="phone" type="tel" required autofocus autocomplete="tel" dir="ltr"
+             class="w-full h-12 px-4 rounded-md bg-surface border {{ 'border-danger' if error else 'border-bord-fort' }} text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
+             {% if error %}aria-describedby="phone-error"{% endif %}
+             placeholder="{{ texts.rsvp_phone_placeholder }}">
+      {% if error %}
+      <p id="phone-error" role="alert" class="text-small text-danger-text mt-2">{{ texts.rsvp_phone_notfound }}</p>
+      {% endif %}
+      <button type="submit"
+              class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        {{ texts.rsvp_phone_submit }}
+      </button>
+    </form>
+    {% endif %}
+
+    {% if step == "form" %}
+    <form method="post" action="/rsvp/submit" class="bg-surface border border-bord rounded-xl shadow-md p-8 space-y-6">
+      <input type="hidden" name="household_id" value="{{ household_id }}">
+      <p class="text-body-lg text-encre font-medium">{{ texts.rsvp_greeting_prefix }} {{ nom_prenom }} !</p>
+
+      <div>
+        <p class="text-small font-semibold text-encre mb-2">{{ texts.rsvp_presence_label }}</p>
+        <div class="flex gap-3" role="radiogroup" aria-label="{{ texts.rsvp_presence_label }}">
+          <label class="flex-1">
+            <input type="radio" name="presence" value="oui" class="sr-only peer" {% if rsvp and rsvp.presence %}checked{% endif %}>
+            <span class="flex items-center justify-center h-12 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_presence_yes }}
+            </span>
+          </label>
+          <label class="flex-1">
+            <input type="radio" name="presence" value="non" class="sr-only peer" {% if rsvp and not rsvp.presence %}checked{% endif %}>
+            <span class="flex items-center justify-center h-12 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_presence_no }}
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="nb_adultes" class="block text-small font-semibold text-encre mb-2">{{ texts.rsvp_nb_adultes_label }}</label>
+          <input id="nb_adultes" name="nb_adultes" type="number" min="0" max="20" dir="ltr"
+                 value="{{ rsvp.nb_adultes if rsvp else 1 }}"
+                 class="w-full h-12 px-4 rounded-md bg-surface border border-bord-fort text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+        </div>
+        <div>
+          <label for="nb_enfants" class="block text-small font-semibold text-encre mb-2">{{ texts.rsvp_nb_enfants_label }}</label>
+          <input id="nb_enfants" name="nb_enfants" type="number" min="0" max="20" dir="ltr"
+                 value="{{ rsvp.nb_enfants if rsvp else 0 }}"
+                 class="w-full h-12 px-4 rounded-md bg-surface border border-bord-fort text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+        </div>
+      </div>
+
+      <div>
+        <p class="text-small font-semibold text-encre mb-2">{{ texts.rsvp_allergies_label }}</p>
+        <div class="flex gap-3 mb-3" role="radiogroup" aria-label="{{ texts.rsvp_allergies_label }}">
+          <label class="flex-1">
+            <input type="radio" name="allergies_bool" value="oui" class="sr-only peer" {% if rsvp and rsvp.allergies_bool %}checked{% endif %}>
+            <span class="flex items-center justify-center h-11 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_allergies_yes }}
+            </span>
+          </label>
+          <label class="flex-1">
+            <input type="radio" name="allergies_bool" value="non" class="sr-only peer" {% if not (rsvp and rsvp.allergies_bool) %}checked{% endif %}>
+            <span class="flex items-center justify-center h-11 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_allergies_no }}
+            </span>
+          </label>
+        </div>
+        <textarea name="allergies_texte" rows="2" placeholder="{{ texts.rsvp_allergies_detail_placeholder }}"
+                  class="w-full px-4 py-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">{{ rsvp.allergies_texte if rsvp and rsvp.allergies_texte else '' }}</textarea>
+      </div>
+
+      <div>
+        <p class="text-small font-semibold text-encre mb-2">{{ texts.rsvp_hotel_label }}</p>
+        <div class="flex gap-3" role="radiogroup" aria-label="{{ texts.rsvp_hotel_label }}">
+          <label class="flex-1">
+            <input type="radio" name="besoin_hotel" value="oui" class="sr-only peer" {% if rsvp and rsvp.besoin_hotel %}checked{% endif %}>
+            <span class="flex items-center justify-center h-11 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_hotel_yes }}
+            </span>
+          </label>
+          <label class="flex-1">
+            <input type="radio" name="besoin_hotel" value="non" class="sr-only peer" {% if not (rsvp and rsvp.besoin_hotel) %}checked{% endif %}>
+            <span class="flex items-center justify-center h-11 px-3 text-center rounded-md border border-bord-fort text-encre font-medium cursor-pointer transition-colors duration-150 peer-checked:bg-vert peer-checked:text-white peer-checked:border-vert peer-focus-visible:ring-2 peer-focus-visible:ring-zellige peer-focus-visible:ring-offset-2">
+              {{ texts.rsvp_hotel_no }}
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit"
+              class="w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        {{ texts.rsvp_submit }}
+      </button>
+    </form>
+    {% endif %}
+
+    {% if step == "success" %}
+    <div class="bg-surface border border-bord rounded-xl shadow-md p-8 text-center">
+      <p class="text-body-lg text-encre font-medium">{{ texts.rsvp_success }}</p>
+      <p class="text-small text-ardoise mt-3">{{ texts.rsvp_edit_note }}</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

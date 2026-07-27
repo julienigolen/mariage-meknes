@@ -2,8 +2,8 @@
 
 > Direction retenue : **S3 · Sahara & Menthe** — sable de plein jour, vert zellige en action, or de la porte en ornement.
 > Destinataire : développeur front (FastAPI + Jinja2 + Tailwind CDN + HTMX, no-build).
-> Statut : **v2.0 validée par le Patron — 2026-07-27**. Remplace intégralement **T1 · Terre de Meknès** (v1.x), elle-même remplaçante de **A · Bleu zellige**. Historique et motifs d'abandon : §14.
-> Site **mono-langue français**, derrière un code d'accès commun, `noindex`. Pas de RTL, pas d'i18n (§4.4).
+> Statut : **v2.1 validée par le Patron — 2026-07-28**. v2.0 (2026-07-27) reste la direction visuelle de fond ; v2.1 y ajoute le **multilingue FR/EN/AR** (§4.4 réécrit, RTL pour l'arabe, typographie Cairo, sélecteur de la porte d'entrée §5.10). Historique et motifs d'abandon des directions antérieures : §14.
+> Site **multilingue FR/EN/AR**, derrière un code d'accès commun, `noindex`. RTL pour l'arabe uniquement (§4.4).
 > Tous les ratios de contraste sont calculés en WCAG 2.1 sur `dune #F4EADA` (fond de page), `surface #FDF8EF` (cartes) ou `encre #38301F` (footer), sauf mention contraire.
 > Proposition produit, fonctionnalités, architecture et planning : `proposition_produit.md` (même dossier).
 
@@ -172,19 +172,26 @@ colors: {
 
 ### 3.1 Familles
 
-| Rôle | Police | Source | Graisses |
-|---|---|---|---|
-| Titres | **Fraunces** (serif expressif, optical sizing) | Google Fonts | 400, 500, 600 |
-| Corps | **Plus Jakarta Sans** | Google Fonts | 400, 500, 600 |
+| Rôle | Police (FR/EN, latin) | Police (AR) | Source | Graisses |
+|---|---|---|---|---|
+| Titres | **Fraunces** (serif expressif, optical sizing) | **Cairo** 700 | Google Fonts | 400, 500, 600 (latin) · 700 (arabe) |
+| Corps | **Plus Jakarta Sans** | **Cairo** 400/500 | Google Fonts | 400, 500, 600 (latin) · 400, 500 (arabe) |
 
-Deux familles, pas trois. Reprises telles quelles de la charte OWP : le rendu est déjà validé, il n'y a aucune décision typographique à reprendre — l'identité de ce site est portée par la **couleur et la photo**.
+**FR/EN : deux familles latines, pas trois.** Reprises telles quelles de la charte OWP, rendu déjà validé — l'identité de ce site est portée par la couleur et la photo, pas par le choix typographique. L'anglais ne demande aucune police supplémentaire : Fraunces et Plus Jakarta Sans couvrent le latin nativement.
+
+**AR : Cairo, ajoutée le 2026-07-28.** Fraunces n'a pas de glyphes arabes ; en `lang="ar"`, **les titres basculent sur Cairo 700** (graisse forte qui reprend, en sans-serif, le rôle d'affirmation que joue le serif expressif de Fraunces en latin) et le corps sur Cairo 400/500. Choix repris directement du pattern déjà validé sur OWP — Cairo couvre proprement l'arabe et le latin, rendu net, bon support RTL, aucune raison d'introduire une troisième famille rien que pour l'arabe. Pas de contraste à recalculer : le changement de police ne touche aucun token couleur.
 
 ```css
+/* pile latine (défaut, FR/EN) */
 --font-display: 'Fraunces', Georgia, serif;
 --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+
+/* pile arabe — appliquée sous [lang="ar"] */
+--font-display-ar: 'Cairo', system-ui, sans-serif;
+--font-body-ar:    'Cairo', system-ui, sans-serif;
 ```
 
-> **Précharger Fraunces** (`<link rel="preload" as="font">`) : le lockup du hero et du header en dépend, et sans elle le nom retombe sur un serif système terne. `font-display: swap`.
+> **Précharger Fraunces** (`<link rel="preload" as="font">`) : le lockup du hero et du header en dépend, et sans elle le nom retombe sur un serif système terne. `font-display: swap`. **Précharger aussi Cairo 700** dès que `lang="ar"` est actif (ou en avance si le poids le permet — un seul fichier de plus, la porte d'entrée est la première page vue et peut être en arabe dès le premier chargement).
 
 ### 3.2 Échelle typographique
 
@@ -212,6 +219,7 @@ Base 16px (`1rem`). `ls` = letter-spacing, `lh` = line-height.
 - **Casse** : phrase normale partout. L'`overline` est la seule exception en MAJUSCULES.
 - **Couleur du texte** : principal `encre`, secondaire `ardoise`, liens `zellige.text` (soulignés au survol), sur-titres de section `zellige.text`.
 - **Longueur de ligne** : corps limité à ~65–75 caractères (`max-w-prose`).
+- **Arabe** : tailles identiques au latin mais `line-height` **+0.1** (l'arabe respire davantage verticalement) ; pas de MAJUSCULES sur l'`overline` (n'existe pas en arabe — le token devient un simple label Cairo 600, sans `text-transform`, `letter-spacing` normal).
 
 ---
 
@@ -238,13 +246,19 @@ Base 16px (`1rem`). `ls` = letter-spacing, `lh` = line-height.
 
 Tailwind par défaut : `sm` 640 · `md` 768 · `lg` 1024 · `xl` 1280. **Mobile-first** — la majorité des invités ouvriront le lien depuis un téléphone.
 
-### 4.4 Mono-langue — pas de RTL
+### 4.4 Multilingue FR/EN/AR — RTL pour l'arabe
 
-**Décision (2026-07-27, reconduite).** Le site est **exclusivement en français** : les deux familles le parlent, le français est très largement pratiqué au Maroc. Il n'y a **ni sélecteur de langue, ni `dir="rtl"`, ni pile de polices arabe**.
+**Décision produit du 2026-07-28** (`proposition_produit.md` §2 point 6, §5.14-15/19) — **remplace intégralement** la décision « mono-langue, pas de RTL » du 12/06 puis reconduite le 27/07. Le site est traduit en français, anglais et arabe ; l'arabe se lit de droite à gauche.
 
-Conséquence pratique : les utilitaires directionnels `left`/`right` de Tailwind sont **autorisés** ici (contrairement à OWP). N'importe pas les utilitaires logiques « au cas où » — c'est du bruit non justifié sur un site jetable à échéance fixe.
+**La langue se choisit à la porte d'entrée, nulle part ailleurs par défaut** (décision produit, non négociable côté DA) : sélecteur FR/EN/AR, FR pré-sélectionné, posé avant tout contenu — c'est le seul écran garanti vu par 100 % des invités avant d'avoir lu quoi que ce soit. Design du sélecteur : §5.10. Mécanique cookie/route côté technique (`app/i18n/translations.py`, `/set-lang`) — hors périmètre DA, ne touche pas cette charte.
 
-> Si l'arabe devait être ajouté (décision produit, pas design), il faudrait reprendre : pile Cairo pour les titres et le corps, miroir complet du layout, `line-height` +0.1. À évaluer, non planifié.
+`<html lang="{{ lang }}" dir="{{ 'rtl' if lang == 'ar' else 'ltr' }}">` — `dir` se déduit de `lang`, jamais un état à part.
+
+**Audit RTL du code déjà construit (2026-07-28) : rien à corriger.** Vérification faite ligne par ligne sur `base.html`, `home.html`, `gate.html`, `app.css` — **zéro utilitaire `left`/`right`/`ml-`/`mr-`/`pl-`/`pr-` en dur**, zéro `space-x-*` (qui aurait exigé `rtl:space-x-reverse`), zéro icône encore posée à mirorer. Tout est construit en `text-center`, `mx-auto`, `flex` (qui mirore tout seul sous `dir="rtl"` — la propriété CSS `flex-direction: row` suit l'axe inline, donc le sens d'écriture), et `gap-x`/`gap-y` (symétriques, non directionnels). L'autorisation `left`/`right` de l'ancien §4.4 existait sur le papier mais n'a jamais été exercée en pratique.
+
+**Conséquence : la règle change pour la suite du chantier, pas le code existant.** À partir de maintenant (formulaire RSVP, back-office, tout ajout) : **utilitaires logiques exclusivement** — `ms-*`/`me-*` (jamais `ml`/`mr`), `ps-*`/`pe-*` (jamais `pl`/`pr`), `text-start`/`text-end` (jamais `text-left`/`text-right`), `start-*`/`end-*` en position absolue (jamais `left-*`/`right-*`). Si `space-x-*` devient nécessaire, toujours accompagné de `rtl:space-x-reverse`.
+
+> **Point de vigilance non négociable : le contenu latin reste `dir="ltr"` même en page arabe.** Numéro de téléphone, compte à rebours (« J−88 » → les chiffres), dates, montants, le **champ code de la porte d'entrée** lui-même — tout ce qui est intrinsèquement numérique/latin doit porter un `dir="ltr"` explicite (ou `unicode-bidi: isolate` + `dir="ltr"`), sinon le moteur bidi de l'arabe réordonne ou désaligne les chiffres au milieu d'un paragraphe RTL. C'est le bug RTL le plus courant et le plus facile à rater : à vérifier composant par composant à l'implémentation, pas seulement au niveau `<html>`.
 
 ### 4.5 Format faire-part — le carton et son cadre
 
@@ -383,14 +397,34 @@ Composant signature du site.
 - Statut en badge §5.7. Chiffres en Plus Jakarta 600 `tabular-nums`.
 - Vide : message travaillé + micro-CTA, jamais un tableau nu.
 
-### 5.10 Porte d'entrée (code d'accès)
+### 5.10 Porte d'entrée (code d'accès + sélecteur de langue)
 
-Première page vue par tous les invités — elle donne le ton.
+Première page vue par tous les invités — elle donne le ton, **et fixe la langue de toute la visite**.
 
 - Fond `dune`, contenu centré verticalement, `max-w-[380px]`.
-- Lockup Fraunces `h2`, une phrase d'accueil `body` `ardoise`, un champ code §5.2, un bouton primaire pleine largeur.
+- **Ordre du contenu, de haut en bas** : sélecteur de langue → filet zellige `or` (§6.1) → lockup Fraunces `h2` → sous-ligne Meknès/date → phrase d'accueil `body` `ardoise` → champ code §5.2 → bouton primaire pleine largeur.
 - **Erreur douce** : « Ce code ne correspond pas — vérifiez votre invitation. » en `danger.text`, jamais « Accès refusé ». Pas de compteur de tentatives affiché.
-- Motif zellige `or` en filet au-dessus du lockup (§6.1).
+
+#### 5.10 bis Sélecteur de langue — 3 pilules, pas un menu déroulant
+
+**Décision DA (2026-07-28).** Trois langues seulement, toutes visibles d'un coup, zéro clic pour ouvrir un menu : un **segmented control** de 3 pilules, pas un dropdown. La logique dropdown d'OWP (§5.6 de sa charte) répond à un header chargé qui doit rester compact ; ici la porte d'entrée n'a **aucun autre élément de navigation** à ce moment-là — le dropdown n'économiserait rien et coûterait un clic de plus à la toute première interaction du site.
+
+**Structure** : piste `bg-surface border border-bord rounded-full p-1`, `inline-flex gap-1`, centrée au-dessus du filet zellige.
+
+| État | Traitement |
+|---|---|
+| Pilule active | fond `vert` plein, texte blanc (**6.29:1** — AA), `rounded-full` | reprend le pattern « switch activé » déjà établi en §5.2 (piste `bord` → `vert`) : un sélecteur de langue est un réglage persistant, pas un CTA à verbe (§2.2) ni un statut acquis (§5.7) — c'est une troisième catégorie, et §5.2 est le précédent le plus proche dans la charte. |
+| Pilule inactive | fond transparent, texte `ardoise` (**5.45:1** sur dune — AA) |
+| Focus | anneau §5.1 bis (`zellige` + offset `dune`) |
+| Hover (inactive) | fond `sable` |
+
+**Libellés : codes courts, pas les noms complets.** `FR` / `EN` / `AR`, en latin dans les trois cas (pas d'écriture arabe pour le libellé « AR ») — trois raisons : (1) le mot complet dans sa propre langue (« Français » / « English » / « العربية ») déborderait sur 380px de large ; (2) l'arabe rendu par Cairo n'est pas garanti chargé à ce tout premier paint, un code latin reste lisible même avant que la police custom arrive ; (3) c'est exactement le pattern que l'utilisateur reconnaît déjà (sélecteurs FR/EN/AR quasi universels sur le web). Chaque pilule porte un `aria-label` complet (« Français » / « English » / « العربية ») pour le lecteur d'écran, indépendamment du texte visible abrégé.
+
+**Taille tactile** : chaque pilule 44px de haut minimum (règle §5, aucune exception), padding horizontal suffisant pour ne pas paraître écrasée malgré le code court (`px-4` mini).
+
+**Comportement** : clic → pose immédiate du cookie `lang` (route technique `/set-lang`, hors périmètre DA) → réaffichage de la page dans la langue choisie, sélecteur toujours visible, pilule active mise à jour. FR pré-sélectionné par défaut, avant toute interaction.
+
+Motif zellige `or` en filet au-dessus du lockup, sous le sélecteur (§6.1).
 
 ---
 
@@ -400,6 +434,7 @@ Première page vue par tous les invités — elle donne le ton.
 - ⛔ **Aucun émoji en guise d'icône**, nulle part.
 - Pas d'icônes pleines, pas de mélange de banques.
 - Icônes décoratives `aria-hidden="true"` ; icône seule porteuse de sens → `aria-label`.
+- **Mirroring RTL (2026-07-28)** : icônes **directionnelles** (flèches, chevrons, « étape suivante », le futur chevron « Voir sur Google Maps » ou tout lien externe fléché) — retournées en arabe via `rtl:-scale-x-100`. Icônes **non directionnelles** (calendrier, cœur décoratif s'il en apparaît un jour hors interdiction §10, check, alert) — inchangées. Aucune icône n'est encore posée dans le code à ce jour (audit §4.4) ; cette règle s'applique dès la première.
 
 ### 6.1 Motif zellige — l'ornement maison
 
@@ -503,7 +538,8 @@ Seuils à respecter, mesurés sur les pixels opaques :
 - **Formulaire RSVP** : erreurs annoncées (`aria-live="polite"`), champ fautif ciblé par `aria-describedby`, autocomplétion accessible au clavier (↑↓, Entrée, Échap).
 - **Images** : `alt` descriptif pour le contenu, `alt=""` pour la photo d'ambiance du hero (décorative — le nom est déjà dans le titre).
 - **Couleur seule** : jamais porteuse d'information — un état confirmé porte toujours un texte et une icône, pas seulement du vert.
-- **`lang="fr"`** sur `<html>`.
+- **`lang`/`dir`** sur `<html>`, mis à jour au changement de langue (§4.4) — `lang="fr"`, `"en"` ou `"ar"`, `dir` déduit automatiquement.
+- **Contenu latin isolé en RTL** : `dir="ltr"` explicite sur tout numéro/date/compte à rebours à l'intérieur d'une page arabe (§4.4) — sans ça, le lecteur d'écran et l'affichage visuel désynchronisent l'ordre des chiffres.
 
 ---
 
@@ -518,6 +554,8 @@ Seuils à respecter, mesurés sur les pixels opaques :
 - Colonne resserrée (`prose` 720) par défaut — c'est un faire-part.
 - Libeller les boutons avec un verbe.
 - Le zellige en filet fin, jamais en tapisserie.
+- **Utilitaires logiques (`ms/me`, `ps/pe`, `text-start/end`) pour tout ce qui s'écrit à partir de maintenant** (§4.4) — le site est RTL pour l'arabe.
+- Isoler en `dir="ltr"` tout chiffre/numéro/date au sein d'une page arabe.
 
 **Don't**
 - ⛔ Pas de section en fond `encre` hors footer.
@@ -528,7 +566,7 @@ Seuils à respecter, mesurés sur les pixels opaques :
 - ⛔ Pas d'émoji en guise d'icône, pas de mélange de banques.
 - ⛔ Pas de photo terne : les seuils du §7.1 se mesurent, ils ne s'estiment pas.
 - ⛔ Pas de Fraunces sous 20px ni sur des chiffres de données.
-- ⛔ Pas d'utilitaires logiques RTL importés « au cas où » (§4.4).
+- ⛔ Pas de `left`/`right`/`ml`/`mr`/`pl`/`pr` en dur à partir de maintenant (§4.4) — c'était autorisé, ça ne l'est plus.
 - ⛔ Pas de cliché mariage ni d'orientalisme.
 
 ---
@@ -552,6 +590,7 @@ tailwind.config = {
       fontFamily: {
         display:['Fraunces','Georgia','serif'],
         body:['"Plus Jakarta Sans"','system-ui','sans-serif'],
+        arabic:['Cairo','system-ui','sans-serif'],  // titres ET corps en lang="ar" — §3.1
       },
       fontSize: {
         display:['3.5rem',{ lineHeight:'1.05', letterSpacing:'-0.02em' }],
@@ -595,12 +634,20 @@ tailwind.config = {
 
 ## 12. Notes d'implémentation (Tailwind CDN + Jinja2)
 
-**Faisable en utilitaires purs :** couleurs, typo, espacements, rayons, ombres, conteneurs, boutons, champs, cartes, badges, header, footer, timeline, accordéons, focus (`focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune`), `motion-reduce:`.
+**Faisable en utilitaires purs :** couleurs, typo, espacements, rayons, ombres, conteneurs, boutons, champs, cartes, badges, header, footer, timeline, accordéons, focus (`focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune`), `motion-reduce:`. RTL : le `dir` porté par `<html>` mirore déjà tout seul les layouts en `flex`/`text-center` existants (§4.4) ; variantes `rtl:` de Tailwind (le mode JIT CDN les supporte) pour le reste.
 
 **À prévoir en CSS custom dans `app.css` :**
 
 ```css
-/* Polices — préchargement de Fraunces obligatoire (cf. §3.1) */
+/* Polices — préchargement de Fraunces obligatoire (cf. §3.1), + Cairo 700 dès lang="ar" */
+
+/* Bascule de pile arabe (§3.1/§3.3) */
+[lang="ar"] { font-family: var(--font-body-ar); }
+[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3, [lang="ar"] .font-display {
+  font-family: var(--font-display-ar);
+  font-weight: 700;
+}
+[lang="ar"] { line-height: 1.1; } /* +0.1 relatif aux valeurs latines du §3.2, ajuster par token si besoin plus fin */
 
 /* Filet de losanges zellige (§6.1) */
 .zellige-rule{
@@ -652,8 +699,11 @@ Ordre d'application sur le code existant :
 | v1.0 (2026-06-12) | **A · Bleu zellige** | **Abandonnée le 2026-07-27.** Arbitrée sans image de référence, sur l'intuition « le bleu des zelliges des villes impériales ». La mesure de Bab Mansour a montré 73,7 % d'ocre et **0,04 %** de vert/bleu saturé : un voile bleu-nuit sur une façade ocre donne un gris terne, et aucun réglage d'opacité ne le corrige — le problème était la teinte, pas le dosage. |
 | v1.x (2026-07-27, matin) | **T1 · Terre de Meknès** | **Abandonnée le 2026-07-27, après-midi.** Palette juste (dérivée de la colorimétrie réelle) mais **traitement trop sombre** : voile de hero à 93 % d'opacité, deux sections sur fond encre, accent terre brûlée sans luminosité. Diagnostic du Patron : « trop sombre, je veux quelque chose de plus lumineux ». |
 | **v2.0 (2026-07-27)** | **S3 · Sahara & Menthe** | **En vigueur.** Retenue parmi trois directions plein soleil (S1 · Plein Soleil, S2 · Ciel de Meknès, S3). |
+| **v2.1 (2026-07-28)** | **S3 + multilingue FR/EN/AR** | **En vigueur.** Aucun changement de direction visuelle — ajoute le multilingue (§4.4 réécrit, typographie Cairo §3.1, sélecteur §5.10 bis) suite à la décision produit du 2026-07-28. |
 
 **Ce que v2.0 corrige, au-delà de la palette.** L'erreur de v1 n'était pas chromatique mais **structurelle** : la charte avait hérité d'OWP le pattern « sections sombres pour rythmer » et « voile sombre sous le texte sur photo », qui sont des patterns de **produit** (marketplace, dashboard) et non de **faire-part**. v2.0 les supprime tous les deux : rythme par trois clairs (§2.5), aucun texte sur photo (§5.3).
+
+**Ce que v2.1 découvre en auditant le code pour le RTL.** Le code construit sous v2.0 n'a jamais exercé l'autorisation `left`/`right` en dur que l'ancien §4.4 lui donnait — tout est en `flex`/`text-center`/`gap`, qui mirore tout seul sous `dir="rtl"`. Zéro dette à rattraper ; seule la règle change pour la suite (§4.4).
 
 ### Réserve du DA sur S3, et comment elle est traitée
 
@@ -664,7 +714,8 @@ Le vert en couleur d'action se lit spontanément comme « succès / validé » s
 
 ### Reste ouvert
 
-- **🔴 Photo du hero — bloquant mise en ligne.** L'asset actuel échoue à deux des trois seuils du §7.1. Fournir la photo de Bab Mansour avec ciel, parvis clair et porte dorée, **en pleine résolution** ; le DA la mesure, la détoure et re-vérifie que les hex de la palette gardent leur écho dans l'image avant gel définitif.
+- **Photo du hero — pas prioritaire pour l'instant (décision Patron, 2026-07-28).** L'asset actuel échoue toujours à deux des trois seuils du §7.1 (luminance 50 %, ocre 29 %) ; le Patron a choisi de ne pas la remplacer maintenant (« on reste comme ça »). Reste techniquement non conforme à la charte — à reprendre si/quand le Patron fournit une nouvelle photo en pleine résolution.
 - Photo du couple (`couple.jpg`) — optionnelle, non fournie.
-- Photo réelle du **Palais Laraki** — la section « Le lieu » affiche aujourd'hui Bab Mansour, qui n'est pas le lieu du mariage. Incohérence à corriger.
-- Nombre de moments distincts du programme (décision produit — structure le RSVP).
+- **Contenu traduit EN/AR** : la charte spécifie la typographie, le RTL et le sélecteur (§3.1/§4.4/§5.10) ; la traduction des textes eux-mêmes (copywriting, catalogue `translations.py`) est un chantier technique/produit distinct, hors périmètre DA — cf. `proposition_produit.md` §6.4 (effort non budgété).
+
+**Résolu depuis la dernière version** : photo réelle du Palais Laraki livrée (§7.4, 2026-07-27) ; nombre de moments du programme tranché à « un seul » (2026-07-27, `proposition_produit.md` §5.5).

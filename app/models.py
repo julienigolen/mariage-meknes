@@ -1,14 +1,21 @@
-"""Modèle de données — cf. docs/PROPOSITION_site_mariage_meknes.md §4.
+"""Modèle de données v2 — cf. docs/projet_mariage-meknes/proposition_produit.md §3.
 
-household : le foyer (unité de réponse RSVP)
-guest     : personne rattachée à un foyer
-event     : moment du programme (le mariage = Palais Laraki, N moments à définir)
-rsvp      : réponse d'un foyer pour un événement
-admin_user: les mariés (accès admin)
+household        : le foyer (unité de réponse RSVP), regroupé à l'import via la colonne
+                    `famille` de l'Excel (§2 point 4). Une ligne sans famille = son propre foyer.
+household_member : une ligne par personne importée, rattachée à un foyer. Porte le téléphone
+                    (identifiant de connexion) — un foyer peut avoir N membres, donc N numéros.
+rsvp              : une ligne par foyer (pas par personne). Son existence déclenche le
+                    pré-remplissage à la resoumission.
+admin_user        : les mariés (accès admin — pas encore d'écran dans ce MVP).
+
+Colonnes volontairement absentes de ce MVP (§5.16-21 de la proposition) : email/token_modification
+sur rsvp (email de confirmation différé), message_personnalise et relance_le sur household
+(goodie et suivi admin différés), settings.date_limite_rsvp (pas d'écran admin pour l'éditer —
+la date cible reste un texte statique côté template pour l'instant).
 """
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -22,54 +29,46 @@ class Household(Base):
     __tablename__ = "household"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(200))           # « Famille Bennani », « Sophie & Marc »
-    email: Mapped[str | None] = mapped_column(String(320))
-    phone: Mapped[str | None] = mapped_column(String(40))
-    origin: Mapped[str] = mapped_column(String(2), default="fr")  # fr | ma
-    notes: Mapped[str | None] = mapped_column(Text)
+    import_famille_label: Mapped[str | None] = mapped_column(String(200))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
-    guests: Mapped[list["Guest"]] = relationship(back_populates="household", cascade="all, delete-orphan")
-    rsvps: Mapped[list["Rsvp"]] = relationship(back_populates="household", cascade="all, delete-orphan")
+    members: Mapped[list["HouseholdMember"]] = relationship(
+        back_populates="household", cascade="all, delete-orphan"
+    )
+    rsvp: Mapped["Rsvp | None"] = relationship(
+        back_populates="household", cascade="all, delete-orphan", uselist=False
+    )
 
 
-class Guest(Base):
-    __tablename__ = "guest"
+class HouseholdMember(Base):
+    __tablename__ = "household_member"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     household_id: Mapped[int] = mapped_column(ForeignKey("household.id", ondelete="CASCADE"))
-    first_name: Mapped[str] = mapped_column(String(100))
-    last_name: Mapped[str] = mapped_column(String(100))
-    is_child: Mapped[int] = mapped_column(Integer, default=0)  # 0/1 (portable sqlite/pg)
+    nom_prenom: Mapped[str] = mapped_column(String(200))
+    phone: Mapped[str] = mapped_column(String(40), unique=True, index=True)
+    origine: Mapped[str] = mapped_column(String(2), default="fr")  # fr | ma
+    langue: Mapped[str] = mapped_column(String(2), default="fr")   # fr | ar — déduite de l'indicatif, dormante (§5.13)
+    import_source: Mapped[str | None] = mapped_column(String(200))  # traçabilité ligne Excel
 
-    household: Mapped["Household"] = relationship(back_populates="guests")
-
-
-class Event(Base):
-    __tablename__ = "event"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    slug: Mapped[str] = mapped_column(String(50), unique=True)
-    title: Mapped[str] = mapped_column(String(200))
-    starts_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    location: Mapped[str] = mapped_column(String(200), default="Palais Laraki, Meknès")
-    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    household: Mapped["Household"] = relationship(back_populates="members")
 
 
 class Rsvp(Base):
     __tablename__ = "rsvp"
-    __table_args__ = (UniqueConstraint("household_id", "event_id"),)
+    __table_args__ = (UniqueConstraint("household_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     household_id: Mapped[int] = mapped_column(ForeignKey("household.id", ondelete="CASCADE"))
-    event_id: Mapped[int] = mapped_column(ForeignKey("event.id", ondelete="CASCADE"))
-    status: Mapped[str] = mapped_column(String(10), default="pending")  # yes | no | pending
-    attendees_count: Mapped[int] = mapped_column(Integer, default=0)
-    dietary: Mapped[str | None] = mapped_column(Text)                    # allergies / régimes
-    message: Mapped[str | None] = mapped_column(Text)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+    presence: Mapped[bool] = mapped_column(Boolean)
+    nb_adultes: Mapped[int] = mapped_column(Integer, default=0)
+    nb_enfants: Mapped[int] = mapped_column(Integer, default=0)
+    allergies_bool: Mapped[bool] = mapped_column(Boolean, default=False)
+    allergies_texte: Mapped[str | None] = mapped_column(Text)
+    besoin_hotel: Mapped[bool] = mapped_column(Boolean, default=False)
+    horodatage: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
-    household: Mapped["Household"] = relationship(back_populates="rsvps")
+    household: Mapped["Household"] = relationship(back_populates="rsvp")
 
 
 class AdminUser(Base):

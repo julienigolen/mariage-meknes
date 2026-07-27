@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="fr">
+{#- lang/dir dynamiques (charte §4.4) : dir se déduit de lang, jamais un état à part.
+    "ar" n'est pas encore dans SUPPORTED_LANGS (app/i18n/translations.py) : dir reste
+    "ltr" tant qu'il n'y est pas — rien à faire ici quand l'arabe arrivera. -#}
+<html lang="{{ lang }}" dir="{{ dir }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <title>{% block title %}Kenza &amp; Julien — Meknès, 23 octobre 2026{% endblock %}</title>
+  <title>{% block title %}{{ texts.meta_title }}{% endblock %}</title>
 
   <!-- Polices : Fraunces (titres, préchargée — cf. charte OWP §12) + Plus Jakarta Sans (corps) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +77,7 @@
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <link rel="stylesheet" href="{{ asset('/static/css/app.css') }}">
 </head>
+{% import "components/lang_switch.html" as ls %}
 <!-- Format faire-part (charte §4.5) : la page n'occupe pas l'écran, c'est un carton posé
      sur un fond brun. Le `cadre` donne le contraste et la lecture « invitation », le filet
      doré marque le bord de la carte (5.52:1 côté cadre, 4.29:1 côté footer encre). -->
@@ -91,15 +95,20 @@
       <!-- min-h-[44px] : cible tactile de la charte (§9), le lockup est un lien vers l'accueil -->
       <a href="/" class="flex flex-col justify-center min-h-[44px]" aria-label="Kenza et Julien — accueil">
         <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-vert-text">&amp;</span> Julien</span>
-        <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">Meknès · 23 octobre 2026</span>
+        <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">{{ texts.header_subtitle }}</span>
       </a>
-      <nav class="hidden sm:flex items-center gap-6 text-small font-medium">
-        <a href="/#programme" class="inline-flex items-center h-11 text-zellige-text hover:underline">Programme</a>
-        <a href="/#venir" class="inline-flex items-center h-11 text-zellige-text hover:underline">Venir à Meknès</a>
+      <nav class="hidden sm:flex items-center gap-3 sm:gap-6 text-small font-medium">
+        <a href="/#programme" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_programme }}</a>
+        <a href="/#venir" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_venir }}</a>
         <!-- Anneau de focus : zellige + offset OBLIGATOIRE (charte §5.1 bis).
              Posé à même le vert du bouton, le bleu ne vaut que 1.20:1 — invisible.
              L'offset le ramène contre le fond de la section (7.12:1 sur surface). -->
-        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-vert text-white hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">RSVP</a>
+        <a href="/rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-vert text-white hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">{{ texts.nav_rsvp }}</a>
+        {#- lang_switch_path : chemin sûr pour la redirection /set-lang, PAS request.url.path
+            en général — /rsvp/lookup et /rsvp/submit sont POST-only, un GET dessus renvoie
+            405. Chaque route qui rend une réponse à une requête POST doit passer
+            lang_switch_path="/rsvp" (ou un GET valide) explicitement (cf. app/routers/rsvp.py). -#}
+        {{ ls.lang_switch(lang, lang_switch_path | default(request.url.path)) }}
       </nav>
     </div>
   </header>
@@ -113,7 +122,7 @@
   <footer class="bg-encre text-onDark-muted">
     <div class="max-w-content mx-auto px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p class="font-display text-h4 text-onDark">Kenza &amp; Julien</p>
-      <p class="text-small">Palais Laraki, Meknès · <span class="text-or-light">vendredi 23 octobre 2026</span></p>
+      <p class="text-small">{{ texts.footer_lieu }} · <span class="text-or-light">{{ texts.footer_date }}</span></p>
     </div>
   </footer>
   {% endblock %}
