@@ -14,31 +14,37 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    /* Tokens — direction T1 · Terre de Meknès (contrastes WCAG AA calculés, cf. docs/PROPOSITION §2.2).
-       Palette dérivée de la colorimétrie de Bab Mansour : 74 % de la façade en ocre/or (teinte 20-50°),
-       9 % en brun-rouge, verts/bleus saturés < 0,1 %. */
+    /* Tokens — direction S3 · Sahara & Menthe (charte v2.0, docs/projet_mariage-meknes/charte_graphique.md §11).
+       Trois nuances de sable en fonds, trois voix d'accent aux rôles séparés :
+         vert    = agir     (CTA, jalons du programme, état confirmé)
+         zellige = écrire   (liens, sur-titres, ANNEAU DE FOCUS)
+         or      = décorer  (filets, motifs) — ne porte JAMAIS de texte, sauf la variante `or.text`.
+       Aucune section en fond sombre hors footer (§2.5). Contrastes WCAG calculés, cf. charte §2. */
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            ivoire:  '#FBF7F0',
-            surface: '#FFFDF8',
-            sable:   '#E9DDC9',
-            encre:   '#2E2117',
-            ardoise: '#6A5844',
-            terre:   { DEFAULT: '#9B4A2A', text: '#823E22', light: '#E3A98C' },
-            laiton:  { DEFAULT: '#8A6A18', text: '#75590F', light: '#E8C87E' },
-            /* Erreur : token dédié. Avant, `cuivre` était détourné en couleur d'erreur —
-               impossible ici, `terre` porte déjà le CTA primaire. */
-            danger:  { DEFAULT: '#9E2B1E', text: '#8E2318', light: '#F0A99E' },
-            onDark:  { DEFAULT: '#FAF4EA', muted: '#D5C6B2' },
+            cadre:   '#241C13',   /* fond HORS carte — le brun du faire-part (14.10:1 vs dune) */
+            dune:    '#F4EADA',   /* fond de page */
+            surface: '#FDF8EF',   /* cartes, champs */
+            sable:   '#EADCC4',   /* section d'accent */
+            bord:    { DEFAULT: '#D9C7A9', fort: '#9C8455' },  /* filets · bordure de champ (3.40:1) */
+            encre:   '#38301F',
+            ardoise: '#6B5C42',
+            vert:    { DEFAULT: '#2F6B4F', hover: '#275C43', text: '#24573F', light: '#A3CCB2', veil: '#E1EEE4' },
+            zellige: { DEFAULT: '#0F5B78', text: '#0D4E66', light: '#8FC7DC', veil: '#DCEBF1' },
+            or:      { DEFAULT: '#C8862E', text: '#744E0E', light: '#EFD09A', veil: '#F6E7C9' },
+            danger:  { DEFAULT: '#A32B1C', text: '#8E2318', light: '#F0A99E', veil: '#F7E0DC' },
+            onDark:  { DEFAULT: '#FBF5EA', muted: '#D7C7AC' },
           },
           fontFamily: {
             display: ['Fraunces', 'Georgia', 'serif'],
             body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
           },
           fontSize: {
-            display: ['3.5rem', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+            /* clamp exigé par la charte §3.2 : 36px sur mobile → 56px au-delà.
+               Sans lui, le lockup sortait à 56px sur un écran de 375px. */
+            display: ['clamp(2.25rem, 7.5vw, 3.5rem)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
             h1: ['2.5rem', { lineHeight: '1.1', letterSpacing: '-0.015em' }],
             h2: ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.01em' }],
             h3: ['1.5rem', { lineHeight: '1.2' }],
@@ -51,32 +57,49 @@
           },
           borderRadius: { sm: '4px', md: '8px', lg: '14px', xl: '20px' },
           boxShadow: {
-            sm: '0 1px 2px rgba(46,33,23,0.06)',
-            md: '0 4px 16px rgba(46,33,23,0.08)',
-            lg: '0 12px 32px rgba(46,33,23,0.10)',
+            sm: '0 1px 2px rgba(56,48,31,0.06)',
+            md: '0 4px 16px rgba(56,48,31,0.09)',
+            lg: '0 12px 32px rgba(56,48,31,0.12)',
           },
-          maxWidth: { prose: '720px', content: '1200px', wide: '1320px' },
+          maxWidth: { prose: '720px', content: '1120px', wide: '1320px' },
+          backgroundImage: {
+            /* Hero sans voile (§5.3) : un lever de lumière, pas un assombrissement. */
+            'hero-sable': 'linear-gradient(180deg,#FBF3E4 0%,#F4EADA 60%,#EADCC4 100%)',
+          },
           transitionTimingFunction: { premium: 'cubic-bezier(0.22,1,0.36,1)' },
         }
       }
     }
   </script>
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="{{ asset('/static/css/app.css') }}">
 </head>
-<body class="bg-ivoire text-encre font-body text-body min-h-screen flex flex-col">
+<!-- Format faire-part (charte §4.5) : la page n'occupe pas l'écran, c'est un carton posé
+     sur un fond brun. Le `cadre` donne le contraste et la lecture « invitation », le filet
+     doré marque le bord de la carte (5.52:1 côté cadre, 4.29:1 côté footer encre). -->
+<!-- L'espacement du cadre est un PADDING du body, pas une marge du carton : une marge
+     verticale se serait échappée par margin-collapsing et le carton aurait collé au haut
+     de l'écran (constaté le 2026-07-27). -->
+<body class="bg-cadre font-body text-body min-h-screen lg:py-10">
+  <div class="carton mx-auto bg-dune text-encre lg:border lg:border-or lg:shadow-lg min-h-screen lg:min-h-0 flex flex-col">
 
   {% block header %}
-  <header class="bg-surface border-b-2 border-sable sticky top-0 z-40">
+  <!-- Header NON sticky : une barre de nav qui suit le scroll est un pattern de produit,
+       pas de faire-part — et `position:sticky` ne survit pas au conteneur du carton. -->
+  <header class="bg-surface border-b-2 border-bord">
     <div class="max-w-content mx-auto px-6 lg:px-8 h-[72px] flex items-center justify-between">
-      <a href="/" class="flex flex-col" aria-label="Kenza et Julien — accueil">
-        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-laiton-text">&amp;</span> Julien</span>
+      <!-- min-h-[44px] : cible tactile de la charte (§9), le lockup est un lien vers l'accueil -->
+      <a href="/" class="flex flex-col justify-center min-h-[44px]" aria-label="Kenza et Julien — accueil">
+        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-vert-text">&amp;</span> Julien</span>
         <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">Meknès · 23 octobre 2026</span>
       </a>
       <nav class="hidden sm:flex items-center gap-6 text-small font-medium">
-        <a href="/#programme" class="text-encre hover:text-terre-text">Programme</a>
-        <a href="/#venir" class="text-encre hover:text-terre-text">Venir à Meknès</a>
-        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-terre text-white hover:bg-terre-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-terre focus-visible:ring-offset-2">RSVP</a>
+        <a href="/#programme" class="inline-flex items-center h-11 text-zellige-text hover:underline">Programme</a>
+        <a href="/#venir" class="inline-flex items-center h-11 text-zellige-text hover:underline">Venir à Meknès</a>
+        <!-- Anneau de focus : zellige + offset OBLIGATOIRE (charte §5.1 bis).
+             Posé à même le vert du bouton, le bleu ne vaut que 1.20:1 — invisible.
+             L'offset le ramène contre le fond de la section (7.12:1 sur surface). -->
+        <a href="/#rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-vert text-white hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">RSVP</a>
       </nav>
     </div>
   </header>
@@ -89,11 +112,12 @@
   {% block footer %}
   <footer class="bg-encre text-onDark-muted">
     <div class="max-w-content mx-auto px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="font-display text-h5 text-onDark">Kenza &amp; Julien</p>
-      <p class="text-small">Palais Laraki, Meknès · vendredi 23 octobre 2026</p>
+      <p class="font-display text-h4 text-onDark">Kenza &amp; Julien</p>
+      <p class="text-small">Palais Laraki, Meknès · <span class="text-or-light">vendredi 23 octobre 2026</span></p>
     </div>
   </footer>
   {% endblock %}
 
+  </div>
 </body>
 </html>

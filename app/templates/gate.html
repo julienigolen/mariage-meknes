@@ -4,24 +4,32 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
-<section class="min-h-screen w-full bg-encre flex items-center justify-center px-6">
-  <div class="w-full max-w-md">
+<!-- Porte d'entrée (charte §5.10) — première page vue par tous les invités, elle donne le ton.
+     Portait auparavant un fond `encre` plein écran : c'était le bloc le plus sombre du site. -->
+<!-- La porte d'entrée est elle-même un carton : pas de `min-h-screen` ici, c'est le
+     wrapper `.carton` de base.html qui porte le format. -->
+<section class="w-full bg-hero-sable flex items-center justify-center px-6 py-20 lg:py-28">
+  <div class="w-full max-w-[380px]">
     <div class="text-center mb-8">
-      <p class="text-overline font-semibold uppercase text-laiton-light">Meknès · 23 octobre 2026</p>
-      <h1 class="font-display text-h1 text-onDark mt-2">Kenza &amp; Julien</h1>
-      <p class="text-body text-onDark-muted mt-3">Ce site est réservé à nos invités.</p>
+      <p class="text-overline font-semibold uppercase text-zellige-text">Meknès · 23 octobre 2026</p>
+      <h1 class="font-display text-h1 text-encre mt-2">Kenza <span class="text-vert-text">&amp;</span> Julien</h1>
+      <div class="zellige-rule max-w-[160px] mx-auto mt-4" aria-hidden="true"></div>
+      <p class="text-body text-ardoise mt-4">Ce site est réservé à nos invités.</p>
     </div>
 
-    <form method="post" action="/entree" class="bg-surface rounded-xl shadow-lg p-8">
-      <label for="code" class="block text-small font-medium text-ardoise mb-2">Code d'invitation</label>
+    <form method="post" action="/entree" class="bg-surface border border-bord rounded-xl shadow-md p-8">
+      <label for="code" class="block text-small font-semibold text-encre mb-2">Code d'invitation</label>
+      <!-- Bordure `bord.fort` : 3.40:1 sur surface, seuil UI de 3:1 atteint (charte §5.2).
+           L'ancienne bordure `sable` ne valait que 1.5:1 — le champ n'avait pas de contour perceptible. -->
       <input id="code" name="code" type="text" required autofocus autocomplete="off"
-             class="w-full h-12 px-4 rounded-md bg-ivoire border {{ 'border-danger' if error else 'border-sable' }} text-encre placeholder-ardoise focus:border-terre focus:ring-2 focus:ring-terre/30 focus:outline-none"
+             class="w-full h-12 px-4 rounded-md bg-surface border {{ 'border-danger' if error else 'border-bord-fort' }} text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
+             {% if error %}aria-describedby="code-error"{% endif %}
              placeholder="Le code figure sur votre invitation">
       {% if error %}
-      <p class="text-small text-danger-text mt-2">Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.</p>
+      <p id="code-error" role="alert" class="text-small text-danger-text mt-2">Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.</p>
       {% endif %}
       <button type="submit"
-              class="mt-6 w-full h-12 rounded-md bg-terre text-white font-medium hover:bg-terre-text transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-terre focus-visible:ring-offset-2">
+              class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
         Entrer
       </button>
     </form>

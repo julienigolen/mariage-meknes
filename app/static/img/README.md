@@ -1,18 +1,40 @@
 # Photos attendues (libres de droits ou personnelles)
 
-Statut : `hero` et `lieu` livrés (AVIF + WebP). Reste optionnel : `couple.jpg`.
+Statut : `hero` et `lieu` livrés **en WebP** mais **`hero` est à remplacer** — voir ci-dessous.
+Reste optionnel : `couple.jpg`.
+
+> ⚠️ **WebP uniquement, pas d'AVIF** (charte §7.3). Les AVIF de ce projet se décodaient plus
+> sombres que leur jumeau WebP dans le navigateur (écart moyen 2,7 sur `hero`, 8,7 sur `lieu`) :
+> selon le support AVIF de son navigateur, un invité ne voyait pas les mêmes couleurs.
+> Les trois fichiers `.avif` ont été supprimés le 2026-07-27. Ne pas en régénérer sans
+> vérifier l'égalité de décodage **dans le navigateur**.
 
 | Fichier | Format | Sujet (direction artistique) |
 |---|---|---|
-| `hero.webp` | 1920×980, **fond transparent** | Bab Mansour, porte monumentale de Meknès — sujet détouré, le fond laisse voir le `bg-encre` de la section ; `object-bottom` pour ancrer la base du monument au bas du hero |
-| `lieu.webp` | 1400×715, **fond transparent** | Bab Mansour, porte monumentale de Meknès — sujet détouré, posé sur la section `bg-encre` (pas de `rounded`/`shadow` : l'ombre suivrait le rectangle, pas la silhouette) |
-| `couple.jpg` | 800×600 (4:3) | Vous deux (photo perso) |
+| `hero.webp` | **1802×976** (ratio 1,85), **fond transparent** | Bab Mansour — sujet détouré, ancré en bas du hero, **à fleur des bords du carton**. Il se pose sur le dégradé `bg-hero-sable`, d'où l'exigence de détourage. **Aucun texte n'est posé dessus** (charte §5.3).<br>⚠️ **Ne pas rogner le haut** : une version 1920×863 avait retiré 12 % en haut — donc les créneaux des deux tours — pour compenser le `object-cover` de la v1, qui n'existe plus. La façade se voit **entière, créneaux compris**.<br>⚠️ **Rogner les côtés jusqu'au sujet** : la version 1920×980 gardait 57px de transparent à gauche et 61px à droite, visibles à l'écran comme une bande de sable entre la façade et le filet doré. Procédure de mesure : charte §7.2. |
+| `lieu.webp` | **1536×768** (2:1), rectangle plein | **Palais Laraki** — l'entrée illuminée le soir. Livrée le 2026-07-27, elle remplace un Bab Mansour détouré qui n'était pas le lieu du mariage. Nocturne réétalonnée : c'est l'**exception unique** de la charte §7.4 (le mariage est nocturne). Affichée `rounded-lg` + ombre `md` — l'ombre est légitime, elle suit le cadre.<br>Mesures après retouche : luminance **69,9 %**, ocre **86,0 %**, violet résiduel **0,1 %** — les trois seuils du §7.1 passent (la photo brute en ratait deux : 48,4 % et 29,1 %).<br>⚠️ Toute nouvelle photo du lieu suit la **méthode §7.4** : désaturer la plage colorée parasite, **ne pas la faire tourner** (franges et halos garantis). |
+| `couple.webp` | 800×600 (4:3) | Vous deux (photo perso). Pas encore référencée dans les templates. |
+
+## 🔴 `hero.webp` — à remplacer avant mise en ligne
+
+L'asset actuel échoue à deux des trois seuils photo de la charte (§7.1), mesurés sur ses pixels opaques :
+
+| Critère | Seuil | Mesure de l'asset actuel |
+|---|---|---|
+| Luminance moyenne (V) | ≥ 65 % | **50 %** ❌ |
+| Part ocre / or (teinte 20–50°) | ≥ 50 % | 73,6 % ✅ |
+| Verts + bleus à saturation > 25 % | ≥ 2 % du cadre | **0,09 %** ❌ |
+
+Son zellige « vert » mesure `#888777` et sa frise « bleue » `#6F655C` — ce sont des gris. La photo paraît patrimoniale là où le site doit vendre le soleil du Maroc. **Fournir la photo avec ciel, parvis clair et porte dorée, en pleine résolution** ; le DA la mesure et la détoure avant intégration.
+
+## Critères de choix (charte §7)
+
+Lumière franche de plein jour, tons chauds, sable dominant, matières (zellige, bois, cuivre).
+⛔ À éviter : clair-obscur, contre-jour, nocturne, HDR saturé, filtres froids, foules,
+clichés mariage (alliances, colombes, cœurs), imagerie orientaliste.
 
 Sources libres de droits (licence permettant l'usage sans attribution) :
 - https://unsplash.com/s/photos/meknes
 - https://unsplash.com/s/photos/morocco-palace
 - https://www.pexels.com/search/meknes/
 - https://www.pexels.com/search/moroccan%20architecture/
-
-Critères de choix (charte) : lumière chaude (heure dorée), matières (zellige, bois, laiton),
-cadrage aéré. Éviter : HDR saturé, filtres bleus/froids, foules, clichés « mille et une nuits ».

@@ -1,18 +1,42 @@
-/* CSS custom hors utilitaires — direction T1 · Terre de Meknès */
+/* CSS custom hors utilitaires — direction S3 · Sahara & Menthe (charte v2.0 §12) */
 
 /* Rendu optique fin de Fraunces (non exprimable en utilitaire Tailwind) */
 .font-display { font-optical-sizing: auto; }
 
-/* Focus visible par défaut (jamais d'outline:none sans remplacement) — accent terre */
-:focus-visible { outline: 2px solid #9B4A2A; outline-offset: 2px; }
+/* Focus visible par défaut (jamais d'outline:none sans remplacement) — bleu zellige.
+   L'or est exclu du focus : 2.09:1 sur surface, échec du seuil UI de 3:1 (charte §2.4). */
+:focus-visible { outline: 2px solid #0F5B78; outline-offset: 2px; }
 
-/* Filigrane géométrique (zellige abstrait, ~7 % d'opacité) — séparateur de section.
-   Teinté encre brune #2E2117 pour rester dans le camaïeu de la façade. */
-.zellige-divider {
-  height: 12px;
-  background-image: repeating-linear-gradient(45deg, rgba(46,33,23,0.07) 0 1px, transparent 1px 12px),
-                    repeating-linear-gradient(-45deg, rgba(46,33,23,0.07) 0 1px, transparent 1px 12px);
+/* Carton du faire-part (§4.5) — la page est une carte posée sur le `cadre` brun.
+   Largeur : le carton reste plus étroit que l'écran pour que le cadre soit visible
+   des deux côtés, sans jamais dépasser la largeur utile du contenu.
+   Sur mobile, il occupe tout l'écran (pas de cadre : la largeur est trop précieuse). */
+.carton { max-width: 100%; }
+@media (min-width: 1024px) {
+  .carton { max-width: 1180px; }
 }
+
+/* Filet de losanges zellige (§6.1) — le seul ornement du site, en or, en trait fin.
+   Remplace `.zellige-divider` de la v1, qui était par ailleurs orphelin :
+   les templates appelaient `.terre-divider`, une classe qui n'a jamais existé. */
+.zellige-rule {
+  height: 9px;
+  background-image: radial-gradient(circle at 7px 9px, #C8862E 2.2px, transparent 2.4px);
+  background-size: 14px 9px;
+  opacity: .55;
+}
+
+/* Filigrane de section — 7 % d'opacité maximum, uniquement sur `sable`.
+   Jamais en tapisserie pleine, jamais derrière du texte au-delà de ce seuil. */
+.zellige-veil {
+  background-image: radial-gradient(circle at 7px 9px, #C8862E 2.2px, transparent 2.4px);
+  background-size: 14px 9px;
+  opacity: .07;
+}
+
+/* Accordéons natifs (§5.6) */
+summary { list-style: none; }
+summary::-webkit-details-marker { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
