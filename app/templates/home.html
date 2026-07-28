@@ -80,7 +80,11 @@
           {% if n != 4 %}<span class="w-px flex-1 bg-bord"></span>{% endif %}
         </div>
         <div>
-          <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts['programme_item%d_time' % n] }}</p>
+          <!-- dir="ltr" sur les 3 premiers horaires (19:00 etc., contenu numérique — charte
+               §4.4/§9), PAS sur le 4e : "حتى الصباح"/"Jusqu'au petit matin" est un texte,
+               pas une heure — lui forcer dir="ltr" casserait sa lecture en arabe (gap trouvé
+               à l'activation de l'arabe, 2026-07-30). -->
+          <p class="text-overline font-semibold uppercase text-zellige-text"{% if n != 4 %} dir="ltr"{% endif %}>{{ texts['programme_item%d_time' % n] }}</p>
           <h3 class="font-display text-h4 text-encre mt-1">{{ texts['programme_item%d_title' % n] }}</h3>
           <p class="text-body text-ardoise mt-1">{{ texts['programme_item%d_desc' % n] }}</p>
         </div>

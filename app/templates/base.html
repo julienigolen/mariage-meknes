@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-{#- lang/dir dynamiques (charte §4.4) : dir se déduit de lang, jamais un état à part.
-    "ar" n'est pas encore dans SUPPORTED_LANGS (app/i18n/translations.py) : dir reste
-    "ltr" tant qu'il n'y est pas — rien à faire ici quand l'arabe arrivera. -#}
+{#- lang/dir dynamiques (charte §4.4) : dir se déduit de lang, jamais un état à part. -#}
 <html lang="{{ lang }}" dir="{{ dir }}">
 <head>
   <meta charset="utf-8">
@@ -9,11 +7,13 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <title>{% block title %}{{ texts.meta_title }}{% endblock %}</title>
 
-  <!-- Polices : Fraunces (titres, préchargée — cf. charte OWP §12) + Plus Jakarta Sans (corps) -->
+  <!-- Polices : Fraunces + Plus Jakarta Sans (FR/EN) + Cairo (AR, titres ET corps —
+       charte §3.1 : Fraunces n'a pas de glyphes arabes, Cairo 700 reprend en sans-serif
+       le rôle d'affirmation du serif expressif). Un seul appel Google Fonts pour les 3. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>

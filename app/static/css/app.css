@@ -3,6 +3,19 @@
 /* Rendu optique fin de Fraunces (non exprimable en utilitaire Tailwind) */
 .font-display { font-optical-sizing: auto; }
 
+/* Bascule arabe (charte §3.1/§12) — Fraunces n'a pas de glyphes arabes, tout bascule
+   sur Cairo (700 pour les titres, poids normal pour le corps). Line-height +0.1 :
+   l'arabe respire davantage verticalement que le latin. */
+[lang="ar"] {
+  font-family: 'Cairo', system-ui, sans-serif;
+  line-height: 1.1;
+}
+[lang="ar"] .font-display {
+  font-family: 'Cairo', system-ui, sans-serif;
+  font-weight: 700;
+  font-optical-sizing: normal; /* Cairo n'a pas d'optical sizing, propriété sans effet mais inoffensive */
+}
+
 /* Focus visible par défaut (jamais d'outline:none sans remplacement) — bleu zellige.
    L'or est exclu du focus : 2.09:1 sur surface, échec du seuil UI de 3:1 (charte §2.4). */
 :focus-visible { outline: 2px solid #0F5B78; outline-offset: 2px; }

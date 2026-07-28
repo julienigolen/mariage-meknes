@@ -6,14 +6,14 @@ un attribut de dict comme une clé). Clés préfixées par écran/domaine pour �
 collisions (gate_*, header_*, hero_*, programme_*, lieu_*, dresscode_*, guide_*, rsvp_*,
 footer_*).
 
-L'arabe n'est pas encore dans ce catalogue (charte_graphique.md §4.4 : FR+EN d'abord,
-AR suit dans un second temps — décision Patron 2026-07-28). SUPPORTED_LANGS ne liste
-donc que fr/en pour l'instant ; ajouter "ar" ici quand son tour vient, sans toucher au
-reste du code (routes/templates lisent déjà lang dynamiquement).
+Arabe activé le 2026-07-30 (charte_graphique.md §4.4 : FR+EN d'abord — 2026-07-28 —
+puis AR dans un second temps, comme prévu). dir="rtl" se déclenche automatiquement
+dès que "ar" est dans SUPPORTED_LANGS (app/i18n/context.py) : rien d'autre à changer
+côté routes/templates, ils lisent déjà lang dynamiquement.
 """
 from typing import Any
 
-SUPPORTED_LANGS = ["fr", "en"]
+SUPPORTED_LANGS = ["fr", "en", "ar"]
 DEFAULT_LANG = "fr"
 
 TRANSLATIONS: dict[str, dict[str, Any]] = {
@@ -233,6 +233,134 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "rsvp_submit": "Confirm my response",
         "rsvp_success": "Thank you! Your response has been recorded.",
         "rsvp_edit_note": "You can update your response at any time by re-entering your phone number.",
+    },
+    # Arabe standard (fusha), pas darija — un faire-part formel s'écrit en fusha même
+    # au Maroc (2026-07-30, décision Patron via "go" sur la recommandation DA).
+    # Chiffres restent en latin (convention OWP reconduite). "Kenza & Julien" reste en
+    # LATIN partout, y compris ici : le lockup (charte §1.1) est câblé en dur en latin
+    # dans les templates (identité typographique, pas du contenu traduisible) — un
+    # premier jet avait translittéré les prénoms dans ces deux clés de titre, repéré
+    # incohérent à la vérification visuelle (le lockup affiché restait en latin pendant
+    # que l'onglet du navigateur passait en arabe). Corrigé : les prénoms ne sont
+    # transcrits nulle part, `كنزة`/`جوليان` n'auraient été qu'une graphie parmi
+    # d'autres possibles, sans autorité pour la choisir. "Palais Laraki" -> قصر العراقي :
+    # nom arabe réel relevé sur l'enseigne du lieu (photo intégrée §7.4 de la charte),
+    # pas une translittération de "Laraki" — à confirmer que c'est bien la graphie
+    # qu'utilisent les mariés eux-mêmes, l'enseigne d'un lieu recevant des événements
+    # peut différer du nom d'état civil.
+    # ⚠️ Premier jet — relecture native indispensable avant mise en ligne (registre,
+    # tournures figées, nuances) : c'est un faire-part, pas une notice technique.
+    "ar": {
+        "meta_title": "Kenza & Julien — مكناس، 23 أكتوبر 2026",
+
+        # ---- Porte d'entrée ----
+        "gate_page_title": "أهلاً بكم — Kenza & Julien",
+        "gate_overline": "مكناس · 23 أكتوبر 2026",
+        "gate_intro": "هذا الموقع مخصص لضيوفنا فقط.",
+        "gate_code_label": "رمز الدعوة أو رقم الهاتف",
+        "gate_code_placeholder": "الرمز الموجود في دعوتكم، أو رقم هاتفكم",
+        "gate_error": "هذا الرمز أو الرقم غير صحيح — يرجى التحقق من الإدخال أو التواصل معنا.",
+        "gate_submit": "دخول",
+
+        # ---- Header / footer ----
+        "header_subtitle": "مكناس · 23 أكتوبر 2026",
+        "nav_programme": "البرنامج",
+        "nav_venir": "القدوم إلى مكناس",
+        "nav_rsvp": "تأكيد الحضور",
+        "footer_date": "الجمعة 23 أكتوبر 2026",
+        "footer_lieu": "قصر العراقي، مكناس",
+
+        # ---- Hero ----
+        "hero_overline": "احفظوا الموعد",
+        "hero_intro": "يسعدنا أن ندعوكم إلى المغرب للاحتفال بزفافنا، محاطين بعائلتينا وثقافتينا.",
+        "hero_date_label": "التاريخ",
+        "hero_date_value": "الجمعة 23 أكتوبر 2026",
+        "hero_lieu_label": "المكان",
+        "hero_lieu_value": "قصر العراقي، مكناس",
+        "hero_countdown_label": "العد التنازلي",
+        # Préfixe gardé en latin ("D−" comme la version anglaise) : le champ est isolé
+        # dir="ltr" dans le template (contenu numérique, charte §4.4/§9) — un caractère
+        # arabe à l'intérieur d'un span forcé LTR se dessinerait mal (pas de liaison des
+        # lettres). Le libellé au-dessus (hero_countdown_label) porte déjà le sens.
+        "hero_countdown_prefix": "D−",
+        "hero_cta": "تأكيد حضوري",
+        "hero_rsvp_confirmed": "تم تأكيد حضوركم",
+        "hero_rsvp_declined": "لقد أخبرتمونا أنه لن يتسنى لكم الحضور",
+        "hero_rsvp_edit": "تعديل إجابتي",
+
+        # ---- Programme ----
+        "programme_overline": "البرنامج",
+        "programme_title": "أمسية في قصر العراقي",
+        "programme_item1_time": "19:00",
+        "programme_item1_title": "استقبال الضيوف",
+        "programme_item1_desc": "شاي وحلويات ولقاءات في صالات القصر.",
+        "programme_item2_time": "20:30",
+        "programme_item2_title": "دخول العروسين",
+        "programme_item2_desc": "اللحظة التي تبدأ فيها الحفلة فعلاً.",
+        "programme_item3_time": "22:00",
+        "programme_item3_title": "العشاء",
+        "programme_item3_desc": "عشاء بنكهات مغربية، يُقدَّم على المائدة.",
+        "programme_item4_time": "حتى الصباح",
+        "programme_item4_title": "الحفلة",
+        "programme_item4_desc": "نرقص حتى آخر الليل.",
+
+        # ---- Le lieu ----
+        "lieu_overline": "المكان",
+        "lieu_title": "قصر العراقي، مكناس",
+        "lieu_img_alt": "مدخل قصر العراقي مضاءً ليلاً، بوابة منحوتة وشمعدانات",
+        "lieu_intro": "تقام السهرة بأكملها في المكان نفسه — لا حاجة للتنقل بمجرد وصولكم.",
+        "lieu_maps_cta": "عرض على خرائط جوجل",
+
+        # ---- Dress code ----
+        "dresscode_overline": "قواعد اللباس",
+        "dresscode_title": "أناقة على طريقتكم الخاصة",
+        "dresscode_text": "لباس سهرة أنيق. القفطان وفساتين السهرة والبدلات كلها مُرحَّب بها — "
+                           "البسوا ما يشرّفكم ويسعدكم.",
+
+        # ---- Guide voyage ----
+        "guide_overline": "القدوم إلى مكناس",
+        "guide_title": "تحضير رحلتكم",
+        "guide_intro": "لضيوفنا القادمين من فرنسا — الدليل الكامل (أماكن إقامة موصى بها، "
+                        "عناوين مفيدة) سيُنشر قريباً.",
+        "guide_avion_title": "بالطائرة",
+        "guide_avion_text": "أقرب مطار هو <strong class=\"text-encre\">مطار فاس - سايس (FEZ)</strong>، "
+                             "على بعد حوالي 45 دقيقة بالسيارة من مكناس — رحلات مباشرة من باريس وعدة "
+                             "مدن فرنسية. بدائل أخرى: الرباط (حوالي ساعة ونصف) أو الدار البيضاء (حوالي "
+                             "ساعتين ونصف)، مع إمكانية الربط بالقطار. <strong class=\"text-encre\">احجزوا "
+                             "مبكراً لعطلة نهاية أسبوع 23 أكتوبر.</strong>",
+        "guide_loger_title": "الإقامة",
+        "guide_loger_text": "ستُنشر هنا قريباً جداً قائمة بالفنادق الموصى بها.",
+        "guide_savoir_title": "معلومات مفيدة",
+        "guide_savoir_text": "في أواخر أكتوبر بمكناس: أيام معتدلة (حوالي 24&nbsp;°C) وأمسيات باردة "
+                              "نسبياً (حوالي 12&nbsp;°C) — يُنصح بإحضار سترة أو شال. العملة: الدرهم "
+                              "المغربي (MAD)، السحب سهل محلياً، والدفع نقداً شائع. اللغة الفرنسية "
+                              "مُتحدَّث بها على نطاق واسع.",
+
+        # ---- RSVP ----
+        "rsvp_overline": "تأكيد الحضور",
+        "rsvp_title": "تأكيد حضوركم",
+        "rsvp_intro": "يرجى الرد قبل نهاية أغسطس 2026.",
+        "rsvp_phone_label": "رقم الهاتف",
+        "rsvp_phone_placeholder": "الرقم المستخدم في دعوتكم",
+        "rsvp_phone_submit": "متابعة",
+        "rsvp_phone_notfound": "هذا الرقم غير مرتبط بأي دعوة — يرجى التحقق منه أو التواصل معنا "
+                                "مباشرة.",
+        "rsvp_greeting_prefix": "مرحباً",
+        "rsvp_presence_label": "هل ستكونون حاضرين؟",
+        "rsvp_presence_yes": "نعم، بكل سرور",
+        "rsvp_presence_no": "لا، لن أتمكن من الحضور",
+        "rsvp_nb_adultes_label": "عدد البالغين",
+        "rsvp_nb_enfants_label": "عدد الأطفال",
+        "rsvp_allergies_label": "هل لديكم حساسية أو نظام غذائي خاص؟",
+        "rsvp_allergies_yes": "نعم",
+        "rsvp_allergies_no": "لا",
+        "rsvp_allergies_detail_placeholder": "يرجى التوضيح هنا",
+        "rsvp_hotel_label": "هل ترغبون في حجز فندق؟",
+        "rsvp_hotel_yes": "نعم",
+        "rsvp_hotel_no": "لا",
+        "rsvp_submit": "تأكيد إجابتي",
+        "rsvp_success": "شكراً لكم! تم تسجيل إجابتكم بنجاح.",
+        "rsvp_edit_note": "يمكنكم تعديل إجابتكم في أي وقت بإعادة إدخال رقم هاتفكم.",
     },
 }
 
