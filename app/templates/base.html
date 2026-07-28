@@ -97,19 +97,25 @@
         <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-vert-text">&amp;</span> Julien</span>
         <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">{{ texts.header_subtitle }}</span>
       </a>
-      <nav class="hidden sm:flex items-center gap-3 sm:gap-6 text-small font-medium">
-        <a href="/#programme" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_programme }}</a>
-        <a href="/#venir" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_venir }}</a>
-        <!-- Anneau de focus : zellige + offset OBLIGATOIRE (charte §5.1 bis).
-             Posé à même le vert du bouton, le bleu ne vaut que 1.20:1 — invisible.
-             L'offset le ramène contre le fond de la section (7.12:1 sur surface). -->
-        <a href="/rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-vert text-white hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">{{ texts.nav_rsvp }}</a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <nav class="hidden sm:flex items-center gap-3 sm:gap-6 text-small font-medium">
+          <a href="/#programme" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_programme }}</a>
+          <a href="/#venir" class="inline-flex items-center h-11 text-zellige-text hover:underline">{{ texts.nav_venir }}</a>
+          <!-- Anneau de focus : zellige + offset OBLIGATOIRE (charte §5.1 bis).
+               Posé à même le vert du bouton, le bleu ne vaut que 1.20:1 — invisible.
+               L'offset le ramène contre le fond de la section (7.12:1 sur surface). -->
+          <a href="/rsvp" class="inline-flex items-center h-11 px-5 rounded-md bg-vert text-white hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">{{ texts.nav_rsvp }}</a>
+        </nav>
+        {#- Sélecteur de langue HORS du <nav> : le <nav> se cache sous 640px (pas de menu
+            mobile de repli pour Programme/Venir/RSVP — dette pré-existante, hors périmètre
+            ici), mais la langue doit rester joignable partout, y compris sur mobile après
+            la porte d'entrée (feedback Patron 2026-07-29 : « pas d'option » une fois entré). -#}
         {#- lang_switch_path : chemin sûr pour la redirection /set-lang, PAS request.url.path
             en général — /rsvp/lookup et /rsvp/submit sont POST-only, un GET dessus renvoie
             405. Chaque route qui rend une réponse à une requête POST doit passer
             lang_switch_path="/rsvp" (ou un GET valide) explicitement (cf. app/routers/rsvp.py). -#}
         {{ ls.lang_switch(lang, lang_switch_path | default(request.url.path)) }}
-      </nav>
+      </div>
     </div>
   </header>
   {% endblock %}

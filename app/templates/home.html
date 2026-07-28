@@ -29,6 +29,19 @@
       <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_countdown_label }}</p><p class="font-display text-h4 text-or-text mt-0.5" dir="ltr">{{ texts.hero_countdown_prefix }}{{ days_left }}</p></div>
       {% endif %}
     </div>
+    {% if my_rsvp %}
+    <!-- Foyer déjà répondu (feedback Patron 2026-07-29) : jamais un aplat vert plein pour
+         un état acquis (charte §2.2) — badge vert.veil + texte vert.text, puis un vrai bouton
+         (zellige, pas vert) pour l'action "modifier", qui reste une action à part entière. -->
+    <div class="mt-6 flex flex-col items-center gap-3">
+      <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-vert-veil text-vert-text text-small font-semibold">
+        {% if my_rsvp.presence %}✓ {{ texts.hero_rsvp_confirmed }}{% else %}{{ texts.hero_rsvp_declined }}{% endif %}
+      </span>
+      <a href="/rsvp" class="inline-flex items-center h-11 px-6 rounded-md border border-zellige text-zellige-text font-semibold hover:bg-zellige-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
+        {{ texts.hero_rsvp_edit }}
+      </a>
+    </div>
+    {% else %}
     <div class="mt-6">
       <!-- Libellé verbal obligatoire sur un aplat vert plein (charte §2.2) :
            c'est ce qui empêche le bouton d'être lu comme un état « déjà confirmé ». -->
@@ -36,6 +49,7 @@
         {{ texts.hero_cta }}
       </a>
     </div>
+    {% endif %}
   </div>
   <!-- Façade détourée, ancrée en bas, à fleur des bords du carton (charte §5.3).
        Pas de `max-w-*` ici : toute largeur max rouvrirait une marge de sable entre la

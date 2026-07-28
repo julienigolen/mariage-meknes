@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     access_code: str = "meknes2026"                   # code commun invités (changer en prod !)
     gate_cookie_name: str = "kj_gate"
     gate_max_age: int = 90 * 24 * 3600                # 90 jours
+    household_cookie_name: str = "kj_household"       # foyer reconnu (entrée par tel ou RSVP) — feedback 2026-07-29
 
     @field_validator("database_url")
     @classmethod

@@ -24,9 +24,9 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "gate_page_title": "Bienvenue — Kenza & Julien",
         "gate_overline": "Meknès · 23 octobre 2026",
         "gate_intro": "Ce site est réservé à nos invités.",
-        "gate_code_label": "Code d'invitation",
-        "gate_code_placeholder": "Le code figure sur votre invitation",
-        "gate_error": "Ce code ne semble pas le bon — vérifiez votre invitation ou écrivez-nous.",
+        "gate_code_label": "Code d'invitation ou numéro de téléphone",
+        "gate_code_placeholder": "Le code sur votre invitation, ou votre numéro",
+        "gate_error": "Ce code ou ce numéro ne correspond à rien — vérifiez la saisie ou écrivez-nous.",
         "gate_submit": "Entrer",
 
         # ---- Header / footer ----
@@ -48,6 +48,9 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "hero_countdown_label": "Compte à rebours",
         "hero_countdown_prefix": "J−",
         "hero_cta": "Confirmer ma présence",
+        "hero_rsvp_confirmed": "Votre présence est confirmée",
+        "hero_rsvp_declined": "Vous avez indiqué ne pas pouvoir venir",
+        "hero_rsvp_edit": "Modifier ma réponse",
 
         # ---- Programme ----
         "programme_overline": "Programme",
@@ -130,9 +133,9 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "gate_page_title": "Welcome — Kenza & Julien",
         "gate_overline": "Meknès · October 23, 2026",
         "gate_intro": "This site is reserved for our guests.",
-        "gate_code_label": "Invitation code",
-        "gate_code_placeholder": "The code is on your invitation",
-        "gate_error": "This code doesn't seem right — please check your invitation or get in touch.",
+        "gate_code_label": "Invitation code or phone number",
+        "gate_code_placeholder": "The code on your invitation, or your phone number",
+        "gate_error": "This code or number doesn't match anything — please check it or get in touch.",
         "gate_submit": "Enter",
 
         # ---- Header / footer ----
@@ -154,6 +157,9 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "hero_countdown_label": "Countdown",
         "hero_countdown_prefix": "D−",
         "hero_cta": "Confirm my attendance",
+        "hero_rsvp_confirmed": "Your attendance is confirmed",
+        "hero_rsvp_declined": "You've let us know you can't make it",
+        "hero_rsvp_edit": "Update my response",
 
         # ---- Programme ----
         "programme_overline": "Programme",
