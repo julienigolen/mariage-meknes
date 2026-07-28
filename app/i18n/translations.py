@@ -46,7 +46,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "hero_lieu_label": "Lieu",
         "hero_lieu_value": "Palais Laraki, Meknès",
         "hero_countdown_label": "Compte à rebours",
-        "hero_countdown_prefix": "J−",
+        "hero_countdown_unit": "jours",
         "hero_cta": "Confirmer ma présence",
         "hero_rsvp_confirmed": "Votre présence est confirmée",
         "hero_rsvp_declined": "Vous avez indiqué ne pas pouvoir venir",
@@ -84,7 +84,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # ---- Guide voyage ----
         "guide_overline": "Venir à Meknès",
         "guide_title": "Préparer votre voyage",
-        "guide_intro": "Pour nos invités qui viennent de France — le guide complet (hébergements "
+        "guide_intro": "Pour nos invités qui viennent de l'étranger — le guide complet (hébergements "
                         "recommandés, bonnes adresses) arrive bientôt.",
         "guide_avion_title": "En avion",
         "guide_avion_text": "L'aéroport le plus proche est <strong class=\"text-encre\">Fès-Saïss (FEZ)</strong>, "
@@ -155,7 +155,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "hero_lieu_label": "Venue",
         "hero_lieu_value": "Palais Laraki, Meknès",
         "hero_countdown_label": "Countdown",
-        "hero_countdown_prefix": "D−",
+        "hero_countdown_unit": "days",
         "hero_cta": "Confirm my attendance",
         "hero_rsvp_confirmed": "Your attendance is confirmed",
         "hero_rsvp_declined": "You've let us know you can't make it",
@@ -193,7 +193,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # ---- Travel guide ----
         "guide_overline": "Getting to Meknès",
         "guide_title": "Planning your trip",
-        "guide_intro": "For our guests travelling from France — the full guide (recommended places to "
+        "guide_intro": "For our guests travelling from abroad — the full guide (recommended places to "
                         "stay, good addresses) is coming soon.",
         "guide_avion_title": "By plane",
         "guide_avion_text": "The closest airport is <strong class=\"text-encre\">Fès-Saïss (FEZ)</strong>, "
@@ -271,18 +271,24 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "footer_lieu": "قصر العراقي، مكناس",
 
         # ---- Hero ----
-        "hero_overline": "احفظوا الموعد",
+        # Basmala à la place d'une traduction de "Save the date" (feedback Patron
+        # 2026-07-30) : ouverture traditionnelle des faire-part de mariage en contexte
+        # musulman/arabe. Rendue en Cairo (chargée, §3.1/§12) — PAS une image de
+        # calligraphie ornementale à ce stade : si tu veux ce traitement (plus proche
+        # d'un logo qu'un texte), c'est un chantier DA à part (police calligraphique
+        # dédiée ou asset image), pas juste une clé de traduction. Dis-le si tu veux
+        # que j'enchaîne dessus.
+        "hero_overline": "بسم الله الرحمن الرحيم",
         "hero_intro": "يسعدنا أن ندعوكم إلى المغرب للاحتفال بزفافنا، محاطين بعائلتينا وثقافتينا.",
         "hero_date_label": "التاريخ",
         "hero_date_value": "الجمعة 23 أكتوبر 2026",
         "hero_lieu_label": "المكان",
         "hero_lieu_value": "قصر العراقي، مكناس",
         "hero_countdown_label": "العد التنازلي",
-        # Préfixe gardé en latin ("D−" comme la version anglaise) : le champ est isolé
-        # dir="ltr" dans le template (contenu numérique, charte §4.4/§9) — un caractère
-        # arabe à l'intérieur d'un span forcé LTR se dessinerait mal (pas de liaison des
-        # lettres). Le libellé au-dessus (hero_countdown_label) porte déjà le sens.
-        "hero_countdown_prefix": "D−",
+        # "يوماً" (accusatif singulier après un cardinal 11-99, grammaire arabe standard)
+        # — plus le préfixe latin bricolé d'avant : ce mot est maintenant HORS du <bdi>
+        # isolé (home.html), donc il s'affiche normalement, à droite du chiffre isolé.
+        "hero_countdown_unit": "يوماً",
         "hero_cta": "تأكيد حضوري",
         "hero_rsvp_confirmed": "تم تأكيد حضوركم",
         "hero_rsvp_declined": "لقد أخبرتمونا أنه لن يتسنى لكم الحضور",
@@ -320,7 +326,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # ---- Guide voyage ----
         "guide_overline": "القدوم إلى مكناس",
         "guide_title": "تحضير رحلتكم",
-        "guide_intro": "لضيوفنا القادمين من فرنسا — الدليل الكامل (أماكن إقامة موصى بها، "
+        "guide_intro": "لضيوفنا القادمين من الخارج — الدليل الكامل (أماكن إقامة موصى بها، "
                         "عناوين مفيدة) سيُنشر قريباً.",
         "guide_avion_title": "بالطائرة",
         "guide_avion_text": "أقرب مطار هو <strong class=\"text-encre\">مطار فاس - سايس (FEZ)</strong>، "

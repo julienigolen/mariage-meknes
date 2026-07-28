@@ -26,7 +26,11 @@
       <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_lieu_label }}</p><p class="font-display text-h4 text-encre mt-0.5">{{ texts.hero_lieu_value }}</p></div>
       {% if days_left > 0 %}
       <div class="hidden sm:block w-px h-9 bg-bord" aria-hidden="true"></div>
-      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_countdown_label }}</p><p class="font-display text-h4 text-or-text mt-0.5" dir="ltr">{{ texts.hero_countdown_prefix }}{{ days_left }}</p></div>
+      <!-- dir="ltr" NE DOIT PAS être posé sur le <p> lui-même (charte §4.4/§9) : ça change
+           son text-align par défaut (start=left pour un élément ltr) et le désaligne de ses
+           frères qui restent en RTL ambiant (feedback Patron 2026-07-30). La bonne isolation
+           passe par <bdi> autour des seuls chiffres — le <p> garde l'alignement du contexte. -->
+      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_countdown_label }}</p><p class="font-display text-h4 text-or-text mt-0.5"><bdi dir="ltr">{{ days_left }}</bdi> {{ texts.hero_countdown_unit }}</p></div>
       {% endif %}
     </div>
     {% if my_rsvp %}
@@ -80,11 +84,14 @@
           {% if n != 4 %}<span class="w-px flex-1 bg-bord"></span>{% endif %}
         </div>
         <div>
-          <!-- dir="ltr" sur les 3 premiers horaires (19:00 etc., contenu numérique — charte
-               §4.4/§9), PAS sur le 4e : "حتى الصباح"/"Jusqu'au petit matin" est un texte,
-               pas une heure — lui forcer dir="ltr" casserait sa lecture en arabe (gap trouvé
-               à l'activation de l'arabe, 2026-07-30). -->
-          <p class="text-overline font-semibold uppercase text-zellige-text"{% if n != 4 %} dir="ltr"{% endif %}>{{ texts['programme_item%d_time' % n] }}</p>
+          <!-- Isolation des 3 premiers horaires (19:00 etc., contenu numérique — charte
+               §4.4/§9) via <bdi> autour du SEUL texte, pas dir="ltr" sur le <p> lui-même :
+               posé sur le bloc, dir="ltr" changeait son text-align par défaut et désalignait
+               l'horaire de son titre/description juste en dessous en arabe (feedback Patron
+               2026-07-30 : "les heures ne sont pas alignées verticalement"). PAS de <bdi>
+               sur le 4e horaire : "حتى الصباح"/"Jusqu'au petit matin" est un texte, pas une
+               heure — l'isoler casserait sa lecture en arabe. -->
+          <p class="text-overline font-semibold uppercase text-zellige-text">{% if n != 4 %}<bdi dir="ltr">{{ texts['programme_item%d_time' % n] }}</bdi>{% else %}{{ texts['programme_item%d_time' % n] }}{% endif %}</p>
           <h3 class="font-display text-h4 text-encre mt-1">{{ texts['programme_item%d_title' % n] }}</h3>
           <p class="text-body text-ardoise mt-1">{{ texts['programme_item%d_desc' % n] }}</p>
         </div>
