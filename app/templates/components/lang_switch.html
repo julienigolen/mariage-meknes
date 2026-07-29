@@ -1,14 +1,17 @@
 {#- Sélecteur de langue — charte_graphique.md §5.10 bis.
-    3 pilules (FR/EN/AR, arabe activé 2026-07-30). Codes courts en latin dans les
-    trois cas (voir §5.10 bis : lisibles même si Cairo n'est pas encore chargée à ce
-    tout premier paint), aria-label complet pour le lecteur d'écran.
+    2 pilules (FR/EN). Arabe désactivé le 2026-07-29 (Patron) — le travail (traductions,
+    Amiri, Basmala, RTL) reste en place, seule la pilule est retirée. Réactivation :
+    remettre ('ar', 'AR', 'العربية') dans la liste ci-dessous + "ar" dans SUPPORTED_LANGS
+    (app/i18n/translations.py). Codes courts en latin (voir §5.10 bis : lisibles même si
+    la police custom n'est pas encore chargée à ce tout premier paint), aria-label
+    complet pour le lecteur d'écran.
 
     Piste : bg-surface border border-bord rounded-full p-1, pilule active en vert
     plein (précédent : le switch §5.2, pas le CTA à verbe ni le badge de statut).
     Chaque pilule fait 44px de haut mini (règle §5, aucune exception). -#}
 {% macro lang_switch(current_lang, next_url) %}
-<div class="inline-flex gap-1 bg-surface border border-bord rounded-full p-1" role="group" aria-label="Choisir la langue / Choose language / اختر اللغة">
-  {% for code, label, name in [('fr', 'FR', 'Français'), ('en', 'EN', 'English'), ('ar', 'AR', 'العربية')] %}
+<div class="inline-flex gap-1 bg-surface border border-bord rounded-full p-1" role="group" aria-label="Choisir la langue / Choose language">
+  {% for code, label, name in [('fr', 'FR', 'Français'), ('en', 'EN', 'English')] %}
   <a href="/set-lang?lang={{ code }}&next={{ next_url }}"
      aria-label="{{ name }}"
      aria-current="{{ 'true' if current_lang == code else 'false' }}"

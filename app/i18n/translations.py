@@ -6,14 +6,19 @@ un attribut de dict comme une clé). Clés préfixées par écran/domaine pour �
 collisions (gate_*, header_*, hero_*, programme_*, lieu_*, dresscode_*, guide_*, rsvp_*,
 footer_*).
 
-Arabe activé le 2026-07-30 (charte_graphique.md §4.4 : FR+EN d'abord — 2026-07-28 —
-puis AR dans un second temps, comme prévu). dir="rtl" se déclenche automatiquement
-dès que "ar" est dans SUPPORTED_LANGS (app/i18n/context.py) : rien d'autre à changer
-côté routes/templates, ils lisent déjà lang dynamiquement.
+Arabe activé le 2026-07-30, désactivé le 2026-07-29 (Patron : « désactive la langue
+arabe dans le sélecteur ») — le dict TRANSLATIONS["ar"] et tout le travail associé
+(police Amiri, Basmala, RTL) restent intacts, seule la sélection est coupée : retirée
+de SUPPORTED_LANGS (donc /set-lang?lang=ar retombe sur DEFAULT_LANG, cf.
+app/i18n/context.py) et du sélecteur (components/lang_switch.html). Réactivation :
+remettre "ar" ci-dessous + la pilule dans lang_switch.html, rien d'autre à toucher.
+dir="rtl" se déclenche automatiquement dès que "ar" est dans SUPPORTED_LANGS
+(app/i18n/context.py) : rien d'autre à changer côté routes/templates, ils lisent déjà
+lang dynamiquement.
 """
 from typing import Any
 
-SUPPORTED_LANGS = ["fr", "en", "ar"]
+SUPPORTED_LANGS = ["fr", "en"]
 DEFAULT_LANG = "fr"
 
 TRANSLATIONS: dict[str, dict[str, Any]] = {
@@ -46,6 +51,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
 
         # ---- Hero ----
         "hero_overline": "Save the date",
+        "hero_verse_alt": "Verset coranique sur le mariage (Sourate Ar-Roum, 30:21), calligraphié",
         "hero_intro": "Nous avons la joie de vous convier à notre mariage qui aura lieu au Maroc "
                        "entourés de nos deux familles et de nos deux cultures.",
         "hero_date_label": "Date",
@@ -167,6 +173,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
 
         # ---- Hero ----
         "hero_overline": "Save the date",
+        "hero_verse_alt": "Quranic verse on marriage (Surah Ar-Rum, 30:21), calligraphy",
         "hero_intro": "We're delighted to invite you to our wedding, taking place in Morocco, "
                        "surrounded by our two families and our two cultures.",
         "hero_date_label": "Date",

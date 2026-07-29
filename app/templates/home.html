@@ -19,8 +19,12 @@
          width="1879" height="382" class="mx-auto h-14 sm:h-16 lg:h-20 w-auto">
     <h1 class="font-display text-h2 text-encre mt-3">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
     {% else %}
-    <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.hero_overline }}</p>
-    <h1 class="font-display text-display text-encre mt-1">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
+    <!-- "SAVE THE DATE" retiré en FR/EN (Patron, 2026-07-30) : pure redondance avec la
+         ligne Date/Lieu/Compte à rebours juste en dessous, qui donne déjà la date
+         clairement — aucune information perdue. Le lockup reste grand : contrairement
+         au header (utilitaire, toujours visible), ici c'est le moment "signature" du
+         faire-part, pas une donnée à afficher une fois de plus. -->
+    <h1 class="font-display text-display text-encre">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
     {% endif %}
     <div class="zellige-rule max-w-[220px] mx-auto mt-3" aria-hidden="true"></div>
     <p class="text-body text-ardoise mt-4 max-w-[52ch] mx-auto">
@@ -74,7 +78,7 @@
        le hero, 8,7 sur `lieu`). Selon qu'un invité supporte l'AVIF ou non, il ne voyait
        pas les mêmes couleurs. Un seul format = un seul rendu. -->
   <img src="{{ asset('/static/img/hero.webp') }}" alt="" width="1802" height="976"
-       class="block w-full mt-6 lg:mt-8" onerror="this.remove()">
+       class="block w-full mt-2" onerror="this.remove()">
 </section>
 
 <!-- Programme — fond `dune` (rythme §2.5 : dune → sable → dune → surface → dune) -->
@@ -188,5 +192,25 @@
     </div>
   </div>
 </section>
+
+<!-- Verset coranique en clôture (Patron, 2026-07-30 — « pas un meilleur endroit que
+     entre la photo et le Programme ? ») : déplacé de son interlude initial (aucun lien
+     thématique avec ses voisins d'alors) vers une bénédiction de fin, juste avant le
+     footer — après le programme, le lieu, la tenue et le guide voyage, avant que
+     l'invité quitte la page. Le verset se suffit à lui-même (Basmala en ouverture,
+     "صدق الله العظيم" en clôture dans l'image même), il n'a pas besoin d'être en tête
+     de page pour être complet. Validation religieuse/culturelle en attente côté
+     famille (Patron) — le Patron doit leur montrer avant confirmation définitive.
+     FR/EN uniquement, l'arabe garde sa Basmala dans le hero (§3.4), pas de doublon.
+     Fond `dune`, pas `surface` : la section "Venir à Meknès" juste avant est en
+     `surface`, deux sections consécutives ne partagent jamais le même fond (§2.5). -->
+{% if lang != 'ar' %}
+<section class="w-full bg-dune">
+  <div class="max-w-wide mx-auto px-6 lg:px-8 py-14 lg:py-20 text-center">
+    <img src="{{ asset('/static/img/verse.webp') }}" alt="{{ texts.hero_verse_alt }}"
+         width="891" height="866" class="mx-auto w-full max-w-[190px] sm:max-w-[230px]">
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}
