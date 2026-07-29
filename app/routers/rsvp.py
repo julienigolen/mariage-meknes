@@ -19,10 +19,28 @@ from app.database import get_db
 from app.gate import gate_redirect, known_household_id, set_household_cookie
 from app.i18n.context import lang_context
 from app.models import Household, HouseholdMember, Rsvp
-from app.phone import phone_candidates
+from app.phone import is_plausible_phone, normalize_phone, phone_candidates
 from app.templates_engine import templates
 
 router = APIRouter()
+
+
+def _form_step_response(request: Request, ctx: dict, household: Household, member: HouseholdMember):
+    resp = templates.TemplateResponse(
+        request,
+        "rsvp.html",
+        {
+            "step": "form",
+            "error": False,
+            "household_id": household.id,
+            "nom_prenom": member.nom_prenom,
+            "rsvp": household.rsvp,
+            "lang_switch_path": "/rsvp",
+            **ctx,
+        },
+    )
+    set_household_cookie(resp, household.id)
+    return resp
 
 
 @router.get("/rsvp")
@@ -66,26 +84,58 @@ def rsvp_lookup(request: Request, phone: str = Form(""), db: Session = Depends(g
     ).scalar_one_or_none()
 
     if member is None:
+        # Numéro absent de la liste importée : s'il ressemble à un vrai numéro
+        # FR/MA/US, on propose de créer le foyer plutôt que de bloquer avec une
+        # erreur (Patron 2026-07-28) — sinon, erreur inchangée.
+        if is_plausible_phone(phone):
+            return templates.TemplateResponse(
+                request,
+                "rsvp.html",
+                {"step": "new", "error": False, "phone": normalize_phone(phone), "lang_switch_path": "/rsvp", **ctx},
+            )
         return templates.TemplateResponse(
             request, "rsvp.html", {"step": "phone", "error": True, "lang_switch_path": "/rsvp", **ctx}
         )
 
-    household = member.household
-    resp = templates.TemplateResponse(
-        request,
-        "rsvp.html",
-        {
-            "step": "form",
-            "error": False,
-            "household_id": household.id,
-            "nom_prenom": member.nom_prenom,
-            "rsvp": household.rsvp,
-            "lang_switch_path": "/rsvp",
-            **ctx,
-        },
+    return _form_step_response(request, ctx, member.household, member)
+
+
+@router.post("/rsvp/join")
+def rsvp_join(request: Request, phone: str = Form(""), nom_prenom: str = Form(""), db: Session = Depends(get_db)):
+    """Création d'un foyer par un invité au numéro non répertorié mais plausible
+    (Patron 2026-07-28) — étape intermédiaire après /rsvp/lookup, cf. step "new"."""
+    if (r := gate_redirect(request)) is not None:
+        return r
+    ctx = lang_context(request)
+    nom_prenom = nom_prenom.strip()
+
+    if not is_plausible_phone(phone) or not nom_prenom:
+        return templates.TemplateResponse(
+            request, "rsvp.html", {"step": "phone", "error": True, "lang_switch_path": "/rsvp", **ctx}
+        )
+
+    # Recheck avec phone_candidates (pas juste le nettoyage brut) : couvre le cas
+    # d'un double envoi du formulaire, ou d'un numéro entré sans indicatif qu'un
+    # import ultérieur aurait entre-temps rattaché à un foyer existant.
+    existing = db.execute(
+        select(HouseholdMember).where(HouseholdMember.phone.in_(phone_candidates(phone)))
+    ).scalar_one_or_none()
+    if existing is not None:
+        return _form_step_response(request, ctx, existing.household, existing)
+
+    household = Household()
+    member = HouseholdMember(
+        household=household,
+        nom_prenom=nom_prenom,
+        phone=normalize_phone(phone),
+        langue=ctx["lang"],
+        statut="ajoute_rsvp",
     )
-    set_household_cookie(resp, household.id)
-    return resp
+    db.add(household)
+    db.add(member)
+    db.commit()
+
+    return _form_step_response(request, ctx, household, member)
 
 
 @router.post("/rsvp/submit")

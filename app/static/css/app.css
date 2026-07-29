@@ -3,18 +3,66 @@
 /* Rendu optique fin de Fraunces (non exprimable en utilitaire Tailwind) */
 .font-display { font-optical-sizing: auto; }
 
-/* Bascule arabe (charte §3.1/§12) — Fraunces n'a pas de glyphes arabes, tout bascule
-   sur Cairo (700 pour les titres, poids normal pour le corps). Line-height +0.1 :
-   l'arabe respire davantage verticalement que le latin. */
+/* Bascule arabe (charte §3.1/§12) — Fraunces n'a pas de glyphes arabes, le corps/UI
+   bascule sur Cairo. Line-height +0.1 : l'arabe respire davantage verticalement que
+   le latin. */
 [lang="ar"] {
   font-family: 'Cairo', system-ui, sans-serif;
   line-height: 1.1;
 }
-[lang="ar"] .font-display {
+/* Bug trouvé le 2026-07-29 (sur-titre "المكان" repéré plus petit que "LE LIEU", capture
+   Patron à l'appui) : la règle [lang="ar"] ci-dessus ne s'appliquait en pratique QUASI
+   NULLE PART. `<body class="font-body">` (Plus Jakarta Sans, tailwind_config.html) est
+   plus proche que `<html lang="ar">` de tout le texte de la page — un ancêtre qui pose
+   SA PROPRE valeur de `font-family` interrompt l'héritage venu d'un ancêtre plus
+   lointain, indépendamment de la spécificité CSS. Résultat : tout texte hors
+   `.font-display` (overlines, paragraphes, boutons, labels…) héritait de body =
+   Plus Jakarta Sans -> repli silencieux sur system-ui pour l'arabe (Plus Jakarta Sans
+   n'a aucun glyphe arabe), jamais Cairo. Même correctif que pour .font-display : cibler
+   explicitement la classe qui pose la police concurrente. */
+[lang="ar"] .font-body {
   font-family: 'Cairo', system-ui, sans-serif;
-  font-weight: 700;
-  font-optical-sizing: normal; /* Cairo n'a pas d'optical sizing, propriété sans effet mais inoffensive */
 }
+
+/* Même compensation de taille optique que .font-display (ci-dessous), appliquée au
+   sur-titre : mesuré à ~76 % de la largeur de son équivalent latin ("المكان" vs
+   "LE LIEU", Canvas, 2026-07-29) — même ordre de grandeur que Amiri/Fraunces, même
+   correctif ×1.25. Portée volontairement limitée à .text-overline (un rôle de titre
+   court et proéminent, où l'écart se voit) — pas étendu au corps de texte courant
+   (paragraphes, boutons), où l'effet est moins gênant en lecture continue et n'a pas
+   été signalé. */
+[lang="ar"] .text-overline {
+  font-size: 1.09375rem; /* 14px -> 17.5px */
+}
+/* Titres arabes en Amiri (Naskh lié), pas Cairo — décision Patron 2026-07-28 : Cairo
+   est géométrique, lettres quasi détachées, aucun geste calligraphique ; Amiri reprend
+   en arabe le rôle expressif que Fraunces joue en latin. Couvre tout ce qui porte déjà
+   la classe .font-display (lockup, h2/h3 de section, h4 de programme/carte) — aucune
+   classe supplémentaire à poser dans les templates. */
+[lang="ar"] .font-display {
+  font-family: 'Amiri', serif;
+  font-weight: 700;
+  font-optical-sizing: normal; /* Amiri n'a pas d'optical sizing, propriété sans effet mais inoffensive */
+}
+
+/* Compensation de taille optique (Patron 2026-07-29, capture "Palais Laraki" FR vs AR
+   à l'appui) : à px identique, Amiri se lit plus petit que Fraunces — pas la hauteur
+   de casse (mesurée en fait légèrement PLUS haute via Canvas), mais la largeur du mot
+   (~77 % de son équivalent latin sur "Palais Laraki, Meknès") et la finesse du trait,
+   qui dominent la perception de taille. ×1.25 par token, en valeurs explicites : un
+   premier essai en `font-size: 1.25em` a MICROSCOPÉ le titre au lieu de l'agrandir —
+   `em` se résout contre le parent, pas contre le `text-h2` etc. déjà posé par
+   Tailwind sur le même élément (spécificité égale/supérieure = la règle gagnante
+   remplace tout, `em` ne "part" jamais de la valeur perdante). D'où les combinaisons
+   explicites .font-display.text-* ci-dessous, une par taille réellement utilisée avec
+   font-display (grep app/templates, 2026-07-29) : h1 (porte d'entrée), h2 (titres de
+   section), h4 (lockup header/footer, coordonnées du hero, titres du programme).
+   text-display exclu : jamais combiné à [lang="ar"] (le lockup du hero bascule sur
+   text-h2 spécifiquement en arabe, §5.3 de la charte). */
+[lang="ar"] .font-display.text-h1 { font-size: 3.125rem; }    /* 40px -> 50px */
+[lang="ar"] .font-display.text-h2 { font-size: 2.34375rem; }  /* 30px -> 37.5px */
+[lang="ar"] .font-display.text-h3 { font-size: 1.875rem; }    /* 24px -> 30px, pas encore utilisé mais couvert */
+[lang="ar"] .font-display.text-h4 { font-size: 1.5625rem; }   /* 20px -> 25px */
 
 /* Focus visible par défaut (jamais d'outline:none sans remplacement) — bleu zellige.
    L'or est exclu du focus : 2.09:1 sur surface, échec du seuil UI de 3:1 (charte §2.4). */

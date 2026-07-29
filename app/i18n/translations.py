@@ -20,6 +20,13 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     "fr": {
         "meta_title": "Kenza & Julien — Meknès, 23 octobre 2026",
 
+        # ---- Identité (lockup, §1.1/§3.4) ----
+        "brand_name1": "Kenza",
+        "brand_amp": "&",
+        "brand_name2": "Julien",
+        "brand_full": "Kenza & Julien",
+        "brand_aria_label": "Kenza et Julien — accueil",
+
         # ---- Porte d'entrée ----
         "gate_page_title": "Bienvenue — Kenza & Julien",
         "gate_overline": "Meknès · 23 octobre 2026",
@@ -39,7 +46,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
 
         # ---- Hero ----
         "hero_overline": "Save the date",
-        "hero_intro": "Nous avons la joie de vous convier au Maroc pour célébrer notre mariage, "
+        "hero_intro": "Nous avons la joie de vous convier à notre mariage qui aura lieu au Maroc "
                        "entourés de nos deux familles et de nos deux cultures.",
         "hero_date_label": "Date",
         "hero_date_value": "Vendredi 23 octobre 2026",
@@ -109,6 +116,11 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "rsvp_phone_submit": "Continuer",
         "rsvp_phone_notfound": "Ce numéro ne correspond à aucune invitation — vérifiez la saisie ou "
                                 "contactez-nous directement.",
+        "rsvp_new_intro": "Ce numéro ne figure pas sur notre liste, mais il a l'air valide — "
+                           "dites-nous qui vous êtes pour continuer.",
+        "rsvp_new_name_label": "Votre nom et prénom",
+        "rsvp_new_name_placeholder": "Prénom Nom",
+        "rsvp_new_submit": "Continuer",
         "rsvp_greeting_prefix": "Bonjour",
         "rsvp_presence_label": "Serez-vous présent(e) ?",
         "rsvp_presence_yes": "Oui, avec plaisir",
@@ -129,6 +141,13 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     "en": {
         "meta_title": "Kenza & Julien — Meknès, October 23, 2026",
 
+        # ---- Identity (lockup, §1.1/§3.4) ----
+        "brand_name1": "Kenza",
+        "brand_amp": "&",
+        "brand_name2": "Julien",
+        "brand_full": "Kenza & Julien",
+        "brand_aria_label": "Kenza and Julien — home",
+
         # ---- Gate ----
         "gate_page_title": "Welcome — Kenza & Julien",
         "gate_overline": "Meknès · October 23, 2026",
@@ -148,7 +167,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
 
         # ---- Hero ----
         "hero_overline": "Save the date",
-        "hero_intro": "We're delighted to invite you to Morocco to celebrate our wedding, "
+        "hero_intro": "We're delighted to invite you to our wedding, taking place in Morocco, "
                        "surrounded by our two families and our two cultures.",
         "hero_date_label": "Date",
         "hero_date_value": "Friday, October 23, 2026",
@@ -217,6 +236,11 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "rsvp_phone_submit": "Continue",
         "rsvp_phone_notfound": "This number doesn't match any invitation — please check it or contact us "
                                 "directly.",
+        "rsvp_new_intro": "This number isn't on our list, but it looks valid — "
+                           "tell us who you are to continue.",
+        "rsvp_new_name_label": "Your full name",
+        "rsvp_new_name_placeholder": "First Last",
+        "rsvp_new_submit": "Continue",
         "rsvp_greeting_prefix": "Hello",
         "rsvp_presence_label": "Will you be attending?",
         "rsvp_presence_yes": "Yes, with pleasure",
@@ -236,14 +260,14 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     },
     # Arabe standard (fusha), pas darija — un faire-part formel s'écrit en fusha même
     # au Maroc (2026-07-30, décision Patron via "go" sur la recommandation DA).
-    # Chiffres restent en latin (convention OWP reconduite). "Kenza & Julien" reste en
-    # LATIN partout, y compris ici : le lockup (charte §1.1) est câblé en dur en latin
-    # dans les templates (identité typographique, pas du contenu traduisible) — un
-    # premier jet avait translittéré les prénoms dans ces deux clés de titre, repéré
-    # incohérent à la vérification visuelle (le lockup affiché restait en latin pendant
-    # que l'onglet du navigateur passait en arabe). Corrigé : les prénoms ne sont
-    # transcrits nulle part, `كنزة`/`جوليان` n'auraient été qu'une graphie parmi
-    # d'autres possibles, sans autorité pour la choisir. "Palais Laraki" -> قصر العراقي :
+    # Chiffres restent en latin (convention OWP reconduite).
+    # "Kenza & Julien" EST translittéré en arabe ici (كنزة و جوليان) — décision Patron
+    # du 2026-07-28, qui remplace la décision inverse du même jour (le lockup était
+    # resté en latin après un premier jet incohérent, cf. historique git). Kenza a une
+    # graphie arabe d'origine (كنزة, "trésor") ; Julien est translittéré phonétiquement
+    # (جوليان). L'esperluette devient le connecteur arabe "و" plutôt que le symbole "&",
+    # plus naturel dans un lockup entièrement arabe — colorée `vert.text` comme le "&"
+    # latin (même règle §1.1 : l'esperluette porte la voix de l'union). "Palais Laraki" -> قصر العراقي :
     # nom arabe réel relevé sur l'enseigne du lieu (photo intégrée §7.4 de la charte),
     # pas une translittération de "Laraki" — à confirmer que c'est bien la graphie
     # qu'utilisent les mariés eux-mêmes, l'enseigne d'un lieu recevant des événements
@@ -251,10 +275,17 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     # ⚠️ Premier jet — relecture native indispensable avant mise en ligne (registre,
     # tournures figées, nuances) : c'est un faire-part, pas une notice technique.
     "ar": {
-        "meta_title": "Kenza & Julien — مكناس، 23 أكتوبر 2026",
+        "meta_title": "كنزة و جوليان — مكناس، 23 أكتوبر 2026",
+
+        # ---- Identité (lockup, §1.1/§3.4) ----
+        "brand_name1": "كنزة",
+        "brand_amp": "و",
+        "brand_name2": "جوليان",
+        "brand_full": "كنزة و جوليان",
+        "brand_aria_label": "كنزة وجوليان — الصفحة الرئيسية",
 
         # ---- Porte d'entrée ----
-        "gate_page_title": "أهلاً بكم — Kenza & Julien",
+        "gate_page_title": "أهلاً بكم — كنزة و جوليان",
         "gate_overline": "مكناس · 23 أكتوبر 2026",
         "gate_intro": "هذا الموقع مخصص لضيوفنا فقط.",
         "gate_code_label": "رمز الدعوة أو رقم الهاتف",
@@ -279,7 +310,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # dédiée ou asset image), pas juste une clé de traduction. Dis-le si tu veux
         # que j'enchaîne dessus.
         "hero_overline": "بسم الله الرحمن الرحيم",
-        "hero_intro": "يسعدنا أن ندعوكم إلى المغرب للاحتفال بزفافنا، محاطين بعائلتينا وثقافتينا.",
+        "hero_intro": "يسعدنا أن ندعوكم إلى حفل زفافنا الذي سيقام في المغرب، محاطين بعائلتينا وثقافتينا.",
         "hero_date_label": "التاريخ",
         "hero_date_value": "الجمعة 23 أكتوبر 2026",
         "hero_lieu_label": "المكان",
@@ -351,6 +382,11 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         "rsvp_phone_submit": "متابعة",
         "rsvp_phone_notfound": "هذا الرقم غير مرتبط بأي دعوة — يرجى التحقق منه أو التواصل معنا "
                                 "مباشرة.",
+        "rsvp_new_intro": "هذا الرقم غير موجود في قائمتنا، لكنه يبدو صحيحاً — "
+                           "أخبرونا من أنتم للمتابعة.",
+        "rsvp_new_name_label": "الاسم الكامل",
+        "rsvp_new_name_placeholder": "الاسم واللقب",
+        "rsvp_new_submit": "متابعة",
         "rsvp_greeting_prefix": "مرحباً",
         "rsvp_presence_label": "هل ستكونون حاضرين؟",
         "rsvp_presence_yes": "نعم، بكل سرور",

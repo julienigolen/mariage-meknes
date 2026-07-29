@@ -33,11 +33,13 @@ Pas de logo dessiné : l'identité est **purement typographique**.
 
 | Élément | Traitement |
 |---|---|
-| Nom | **« Kenza & Julien »** en Fraunces 500. Toujours les deux prénoms en toutes lettres. |
+| Nom | **« Kenza & Julien »** en Fraunces 500 (FR/EN). Toujours les deux prénoms en toutes lettres. |
 | Esperluette | En **`vert.text #24573F`** (7.02:1 sur dune — AAA). Décision Patron du 2026-07-27 : l'esperluette porte la voix de l'union, qui est la voix d'action du site. Une première version l'avait mise en `or.text` ; l'or est revenu à son rôle strict d'ornement (§2.4). |
 | Sous-ligne | « MEKNÈS · 23 OCTOBRE 2026 » en token `overline`, `ardoise`, majuscules, `ls 0.08em`. |
 
-Le lockup est **centré** dans le hero, **aligné à gauche** dans le header. Taille minimale d'usage : 16px pour le nom (en dessous, Fraunces devient illisible — §3.3).
+**Arabe : le lockup se translittère (décision Patron du 2026-07-28, remplace la décision « toujours en latin » du même jour).** « كنزة و جوليان », en Amiri 700 (§3.1). Kenza a une graphie arabe d'origine (كنزة) ; Julien est translittéré phonétiquement (جوليان). Le connecteur devient **« و »** (waw, "et") plutôt que le symbole « & » — plus naturel dans un lockup entièrement arabe — et porte la même couleur `vert.text` que l'esperluette latine : c'est le même rôle (la voix de l'union), pas un token différent. S'applique partout où le lockup apparaît (header, footer, porte d'entrée, hero, `<title>`) via les clés i18n `brand_name1`/`brand_amp`/`brand_name2`/`brand_full` — un seul point de vérité, pas de texte câblé en dur par template.
+
+Le lockup est **centré** dans le hero, **aligné à gauche** dans le header. Taille minimale d'usage : 16px pour le nom (en dessous, Fraunces/Amiri devient illisible — §3.3).
 
 **Ornement d'accompagnement.** Un filet de **losanges zellige** (motif §6.1) peut souligner le lockup dans le hero et sur la porte d'entrée, jamais dans le header (qui doit rester sobre).
 
@@ -174,12 +176,14 @@ colors: {
 
 | Rôle | Police (FR/EN, latin) | Police (AR) | Source | Graisses |
 |---|---|---|---|---|
-| Titres | **Fraunces** (serif expressif, optical sizing) | **Cairo** 700 | Google Fonts | 400, 500, 600 (latin) · 700 (arabe) |
+| Titres | **Fraunces** (serif expressif, optical sizing) | **Amiri** 700 (Naskh lié) | Google Fonts | 400, 500, 600 (latin) · 400, 700 (arabe) |
 | Corps | **Plus Jakarta Sans** | **Cairo** 400/500 | Google Fonts | 400, 500, 600 (latin) · 400, 500 (arabe) |
 
 **FR/EN : deux familles latines, pas trois.** Reprises telles quelles de la charte OWP, rendu déjà validé — l'identité de ce site est portée par la couleur et la photo, pas par le choix typographique. L'anglais ne demande aucune police supplémentaire : Fraunces et Plus Jakarta Sans couvrent le latin nativement.
 
-**AR : Cairo, ajoutée le 2026-07-28.** Fraunces n'a pas de glyphes arabes ; en `lang="ar"`, **les titres basculent sur Cairo 700** (graisse forte qui reprend, en sans-serif, le rôle d'affirmation que joue le serif expressif de Fraunces en latin) et le corps sur Cairo 400/500. Choix repris directement du pattern déjà validé sur OWP — Cairo couvre proprement l'arabe et le latin, rendu net, bon support RTL, aucune raison d'introduire une troisième famille rien que pour l'arabe. Pas de contraste à recalculer : le changement de police ne touche aucun token couleur.
+**AR corps : Cairo, ajoutée le 2026-07-28.** Fraunces n'a pas de glyphes arabes ; en `lang="ar"`, le corps/UI (formulaire RSVP, boutons, labels, nav) reste sur **Cairo 400/500** — sa lisibilité géométrique est un atout ici, pas un défaut.
+
+**AR titres : Amiri, décision Patron du 2026-07-28 — remplace Cairo 700 dans ce rôle.** Cairo en 700 avait d'abord servi de solution unique (arabe activé le 2026-07-30), mais reste géométrique même en gras : lettres quasi détachées, aucun geste calligraphique — sans écho au serif expressif de Fraunces côté latin. **Amiri** est un Naskh lié (revival de la typographie arabe éditoriale/littéraire) : lettres franchement liées, empattements fins, reste lisible aux tailles de titre (`h2`/`h3`/`h4`, 20–30px) — c'est lui qui reprend en arabe le rôle qu'a Fraunces en latin. S'obtient par une seule règle CSS (`[lang="ar"] .font-display`), sans classe supplémentaire dans les templates : couvre le lockup, les titres de section et les valeurs de carte d'un coup. Alternative envisagée et écartée pour ce rôle : Markazi Text (Naskh contemporain, moins « livre ancien », resterait une option si Amiri paraît trop classique à l'usage). Aref Ruqaa (calligraphie Ruqaa, plus ornementale encore) est réservé à un usage bien plus étroit : l'image de la Basmala (§3.4), illisible en dessous de 24px donc jamais posé en police de titre courant.
 
 ```css
 /* pile latine (défaut, FR/EN) */
@@ -187,7 +191,7 @@ colors: {
 --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
 
 /* pile arabe — appliquée sous [lang="ar"] */
---font-display-ar: 'Cairo', system-ui, sans-serif;
+--font-display-ar: 'Amiri', serif;
 --font-body-ar:    'Cairo', system-ui, sans-serif;
 ```
 
@@ -220,6 +224,15 @@ Base 16px (`1rem`). `ls` = letter-spacing, `lh` = line-height.
 - **Couleur du texte** : principal `encre`, secondaire `ardoise`, liens `zellige.text` (soulignés au survol), sur-titres de section `zellige.text`.
 - **Longueur de ligne** : corps limité à ~65–75 caractères (`max-w-prose`).
 - **Arabe** : tailles identiques au latin mais `line-height` **+0.1** (l'arabe respire davantage verticalement) ; pas de MAJUSCULES sur l'`overline` (n'existe pas en arabe — le token devient un simple label Cairo 600, sans `text-transform`, `letter-spacing` normal).
+
+### 3.4 Basmala calligraphiée — exception image (arabe uniquement)
+
+**Décision Patron du 2026-07-28.** En arabe, l'overline du hero (« SAVE THE DATE » en FR/EN) est remplacée par la Basmala « بسم الله الرحمن الرحيم », et Cairo — géométrique, lettres quasi détachées — ne rend pas le geste calligraphique voulu. **Aucune police web** ne suffisait non plus : même les Naskh liées (Amiri, Markazi) restent un rendu de police, pas une calligraphie. Décision : la Basmala est une **image**, générée (Gemini, calligraphie Thuluth/Diwani, encre `vert` unie), détourée en WebP à fond transparent (méthode §7.2), posée sur le dégradé du hero exactement comme la photo détourée.
+
+- Fichier : `basmala.webp`, ratio ~4,9:1, hauteur affichée `h-14` mobile → `h-20` desktop (56→80px) — **plus grand que le lockup**, qui passe de `display` (56px) à `h2` (30px) **uniquement en arabe** (le lockup reste inchangé en FR/EN, §5.3).
+- `alt` = le texte de la Basmala (accessibilité), pas une description de l'image.
+- Exception au périmètre du §7 (photographie) : ce n'est pas une photo, donc les seuils du §7.1 ne s'appliquent pas ; c'est traité comme un ornement typographique image, au même titre que le lockup qu'il surplombe.
+- Distinct du choix de police des titres de section (`h2`/`h3`/`h4`) en arabe, tranché le même jour : **Amiri** remplace Cairo dans ce rôle (§3.1). La Basmala en Aref Ruqaa reste un cas à part — plus ornemental, réservé à l'image, jamais posé en police de titre courant.
 
 ---
 
@@ -339,6 +352,7 @@ L'anneau de focus est **`ring-2 zellige #0F5B78` + `ring-offset-2` dans la coule
 - **Photo** : Bab Mansour **détourée sur fond transparent**, ancrée en bas du hero, **à fleur des bords du carton** — pas de largeur max, pas de gouttière latérale. Elle se pose sur le dégradé, d'où l'exigence de détourage (§7). Décision Patron du 2026-07-27 : *« je n'aime pas l'espace à gauche et à droite de l'image »* — la façade borde le carton, elle ne flotte pas dedans. Toute `max-w-*` posée sur cette image rouvre la marge de sable et est donc interdite.
 - **Créneaux** : la façade doit être vue **entière, tours et créneaux compris**. Ne jamais rogner le haut (§7).
 - **Texte** : `overline` `zellige.text`, lockup `display` `encre` avec esperluette `vert.text`, puis une phrase d'accueil en `body` sur **52 caractères max**.
+- **Arabe uniquement** : l'overline « SAVE THE DATE » est remplacée par l'image de la Basmala calligraphiée (§3.4), plus grande que le lockup ; le lockup lui-même passe de `display` à `h2` dans ce cas précis — c'est la seule langue où sa taille varie.
 - **Ligne de coordonnées** : **Date · Lieu · Compte à rebours sur une seule ligne**, séparés par un filet vertical `bord` de 36px. Label en `overline` `ardoise`, valeur en `h4` Fraunces (`encre`, sauf le compte à rebours en `or.text`). Ce sont trois informations de même nature — elles ne s'empilent pas.
 - **CTA primaire vert** en dernier, juste avant la photo.
 - **Rythme resserré** (décision Patron du 2026-07-27 : *« la partie haute semble flotter »*). Écarts : `pt-8 lg:pt-12` en tête, puis `mt-1` / `mt-3` / `mt-4` / `mt-5` / `mt-6`, et `mt-6 lg:mt-8` avant la photo. **L'aération de ce site vient du brun autour du carton, pas du vide à l'intérieur du bloc de tête.** Repère : le bloc de texte fait ~360px et la façade commence à ~470px du haut du carton.

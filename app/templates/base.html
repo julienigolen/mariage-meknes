@@ -7,73 +7,16 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <title>{% block title %}{{ texts.meta_title }}{% endblock %}</title>
 
-  <!-- Polices : Fraunces + Plus Jakarta Sans (FR/EN) + Cairo (AR, titres ET corps —
-       charte §3.1 : Fraunces n'a pas de glyphes arabes, Cairo 700 reprend en sans-serif
-       le rôle d'affirmation du serif expressif). Un seul appel Google Fonts pour les 3. -->
+  <!-- Polices : Fraunces + Plus Jakarta Sans (FR/EN) + Cairo (AR, corps/UI) + Amiri
+       (AR, titres — décision Patron 2026-07-28, remplace Cairo dans ce rôle : Naskh
+       lié, plus proche du geste calligraphique que le sans-serif géométrique de Cairo,
+       charte §3.1). Un seul appel Google Fonts pour les 4. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    /* Tokens — direction S3 · Sahara & Menthe (charte v2.0, docs/projet_mariage-meknes/charte_graphique.md §11).
-       Trois nuances de sable en fonds, trois voix d'accent aux rôles séparés :
-         vert    = agir     (CTA, jalons du programme, état confirmé)
-         zellige = écrire   (liens, sur-titres, ANNEAU DE FOCUS)
-         or      = décorer  (filets, motifs) — ne porte JAMAIS de texte, sauf la variante `or.text`.
-       Aucune section en fond sombre hors footer (§2.5). Contrastes WCAG calculés, cf. charte §2. */
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cadre:   '#241C13',   /* fond HORS carte — le brun du faire-part (14.10:1 vs dune) */
-            dune:    '#F4EADA',   /* fond de page */
-            surface: '#FDF8EF',   /* cartes, champs */
-            sable:   '#EADCC4',   /* section d'accent */
-            bord:    { DEFAULT: '#D9C7A9', fort: '#9C8455' },  /* filets · bordure de champ (3.40:1) */
-            encre:   '#38301F',
-            ardoise: '#6B5C42',
-            vert:    { DEFAULT: '#2F6B4F', hover: '#275C43', text: '#24573F', light: '#A3CCB2', veil: '#E1EEE4' },
-            zellige: { DEFAULT: '#0F5B78', text: '#0D4E66', light: '#8FC7DC', veil: '#DCEBF1' },
-            or:      { DEFAULT: '#C8862E', text: '#744E0E', light: '#EFD09A', veil: '#F6E7C9' },
-            danger:  { DEFAULT: '#A32B1C', text: '#8E2318', light: '#F0A99E', veil: '#F7E0DC' },
-            onDark:  { DEFAULT: '#FBF5EA', muted: '#D7C7AC' },
-          },
-          fontFamily: {
-            display: ['Fraunces', 'Georgia', 'serif'],
-            body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-          },
-          fontSize: {
-            /* clamp exigé par la charte §3.2 : 36px sur mobile → 56px au-delà.
-               Sans lui, le lockup sortait à 56px sur un écran de 375px. */
-            display: ['clamp(2.25rem, 7.5vw, 3.5rem)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
-            h1: ['2.5rem', { lineHeight: '1.1', letterSpacing: '-0.015em' }],
-            h2: ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.01em' }],
-            h3: ['1.5rem', { lineHeight: '1.2' }],
-            h4: ['1.25rem', { lineHeight: '1.3' }],
-            overline: ['0.875rem', { lineHeight: '1.4', letterSpacing: '0.08em' }],
-            'body-lg': ['1.125rem', { lineHeight: '1.7' }],
-            body: ['1rem', { lineHeight: '1.7' }],
-            small: ['0.875rem', { lineHeight: '1.6' }],
-            caption: ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
-          },
-          borderRadius: { sm: '4px', md: '8px', lg: '14px', xl: '20px' },
-          boxShadow: {
-            sm: '0 1px 2px rgba(56,48,31,0.06)',
-            md: '0 4px 16px rgba(56,48,31,0.09)',
-            lg: '0 12px 32px rgba(56,48,31,0.12)',
-          },
-          maxWidth: { prose: '720px', content: '1120px', wide: '1320px' },
-          backgroundImage: {
-            /* Hero sans voile (§5.3) : un lever de lumière, pas un assombrissement. */
-            'hero-sable': 'linear-gradient(180deg,#FBF3E4 0%,#F4EADA 60%,#EADCC4 100%)',
-          },
-          transitionTimingFunction: { premium: 'cubic-bezier(0.22,1,0.36,1)' },
-        }
-      }
-    }
-  </script>
+  {% include "partials/tailwind_config.html" %}
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <link rel="stylesheet" href="{{ asset('/static/css/app.css') }}">
 </head>
@@ -93,8 +36,8 @@
   <header class="bg-surface border-b-2 border-bord">
     <div class="max-w-content mx-auto px-6 lg:px-8 h-[72px] flex items-center justify-between">
       <!-- min-h-[44px] : cible tactile de la charte (§9), le lockup est un lien vers l'accueil -->
-      <a href="/" class="flex flex-col justify-center min-h-[44px]" aria-label="Kenza et Julien — accueil">
-        <span class="font-display text-h4 text-encre leading-none">Kenza <span class="text-vert-text">&amp;</span> Julien</span>
+      <a href="/" class="flex flex-col justify-center min-h-[44px]" aria-label="{{ texts.brand_aria_label }}">
+        <span class="font-display text-h4 text-encre leading-none">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</span>
         <span class="text-caption font-medium uppercase tracking-[0.08em] text-ardoise mt-1">{{ texts.header_subtitle }}</span>
       </a>
       <div class="flex items-center gap-3 sm:gap-6">
@@ -127,7 +70,7 @@
   {% block footer %}
   <footer class="bg-encre text-onDark-muted">
     <div class="max-w-content mx-auto px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="font-display text-h4 text-onDark">Kenza &amp; Julien</p>
+      <p class="font-display text-h4 text-onDark">{{ texts.brand_full }}</p>
       <p class="text-small">{{ texts.footer_lieu }} · <span class="text-or-light">{{ texts.footer_date }}</span></p>
     </div>
   </footer>

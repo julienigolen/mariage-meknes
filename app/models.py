@@ -50,6 +50,20 @@ class HouseholdMember(Base):
     origine: Mapped[str] = mapped_column(String(2), default="fr")  # fr | ma
     langue: Mapped[str] = mapped_column(String(2), default="fr")   # fr | ar — déduite de l'indicatif, dormante (§5.13)
     import_source: Mapped[str | None] = mapped_column(String(200))  # traçabilité ligne Excel
+    # liste_origine (import Excel) | ajoute_rsvp (numéro non répertorié mais au bon
+    # format, saisi au RSVP — Patron 2026-07-28) : distingue la liste de mariage
+    # d'origine des invités que le foyer a lui-même ajoutés à l'identification.
+    # Ne pilote plus le badge "Statut" affiché (Invité/Accepté/Refusé, purement dérivé
+    # de la réponse RSVP, Patron 2026-07-29) — sert uniquement au repère visuel
+    # "auto-inscrit" de la table admin.
+    statut: Mapped[str] = mapped_column(String(20), default="liste_origine")
+    # Effectif théorique que représente CETTE ligne avant toute réponse RSVP (Patron
+    # 2026-07-29) — par défaut 1 (une ligne = une personne), mais ajustable pour un
+    # contact qui représente en réalité plusieurs personnes (ex. "Famille Dupont" sans
+    # lister chaque enfant). Alimente le KPI "Invités" tant que le foyer n'a pas répondu ;
+    # une fois répondu, c'est l'effectif réel du RSVP qui prend le relais (§ compteur
+    # d'invités, app/routers/admin.py::_compute_kpis).
+    effectif_theorique: Mapped[int] = mapped_column(Integer, default=1)
 
     household: Mapped["Household"] = relationship(back_populates="members")
 

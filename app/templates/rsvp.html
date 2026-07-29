@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ texts.rsvp_title }} — Kenza &amp; Julien{% endblock %}
+{% block title %}{{ texts.rsvp_title }} — {{ texts.brand_full }}{% endblock %}
 
 {% block content %}
 <!-- RSVP — identification par téléphone (proposition_produit.md §2 point 4).
@@ -30,6 +30,25 @@
       <button type="submit"
               class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
         {{ texts.rsvp_phone_submit }}
+      </button>
+    </form>
+    {% endif %}
+
+    {% if step == "new" %}
+    <!-- Numéro absent de la liste importée mais au format plausible FR/MA/US
+         (Patron 2026-07-28, app/routers/rsvp.py::rsvp_lookup) : on demande le nom
+         plutôt que de bloquer. Crée un nouveau foyer (statut ajoute_rsvp) à l'étape
+         suivante (/rsvp/join). -->
+    <form method="post" action="/rsvp/join" class="bg-surface border border-bord rounded-xl shadow-md p-8 max-w-[420px] mx-auto">
+      <input type="hidden" name="phone" value="{{ phone }}">
+      <p class="text-small text-ardoise mb-4">{{ texts.rsvp_new_intro }}</p>
+      <label for="nom_prenom" class="block text-small font-semibold text-encre mb-2">{{ texts.rsvp_new_name_label }}</label>
+      <input id="nom_prenom" name="nom_prenom" type="text" required autofocus autocomplete="name"
+             class="w-full h-12 px-4 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
+             placeholder="{{ texts.rsvp_new_name_placeholder }}">
+      <button type="submit"
+              class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        {{ texts.rsvp_new_submit }}
       </button>
     </form>
     {% endif %}

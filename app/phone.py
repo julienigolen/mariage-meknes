@@ -31,3 +31,23 @@ def phone_candidates(raw: str) -> list[str]:
         candidates.append("+33" + rest)
         candidates.append("+212" + rest)
     return candidates
+
+
+_PLAUSIBLE_PATTERNS = [
+    r"\+33\d{9}",    # FR avec indicatif
+    r"\+212\d{9}",   # MA avec indicatif
+    r"\+1\d{10}",    # US avec indicatif
+    r"0\d{9}",       # FR/MA format national (ambigu — couvert par phone_candidates)
+    r"[2-9]\d{9}",   # US format national (10 chiffres, ne commence ni par 0 ni par 1)
+]
+
+
+def is_plausible_phone(raw: str) -> bool:
+    """Filtre de format pour l'auto-ajout RSVP (§ « invité non répertorié », Patron
+    2026-07-28) : un numéro absent de la liste importée n'est proposé à la création
+    d'un nouveau foyer que s'il ressemble à un vrai numéro FR/MA/US — pas une
+    validation exhaustive (pas de vérification d'opérateur/plage), juste un garde-fou
+    contre une saisie au hasard avant de demander un nom.
+    """
+    cleaned = normalize_phone(raw)
+    return any(re.fullmatch(p, cleaned) for p in _PLAUSIBLE_PATTERNS)

@@ -10,8 +10,18 @@
   <!-- Rythme resserré (charte §5.3) : le bloc de tête flottait, la façade arrivait trop bas.
        L'aération vient du blanc autour du carton, pas de l'intérieur du bloc. -->
   <div class="max-w-wide mx-auto px-6 lg:px-8 pt-8 lg:pt-12 text-center">
+    {% if lang == 'ar' %}
+    <!-- Basmala en calligraphie (Patron, 2026-07-28) : image générée puis détourée
+         (fond transparent), remplace le texte Cairo — Cairo reste géométrique/détaché,
+         aucune police web n'a le geste demandé. Plus grande que le lockup, qui est réduit
+         UNIQUEMENT en arabe pour garder l'équilibre (charte §5.3/§3.1 à documenter). -->
+    <img src="{{ asset('/static/img/basmala.webp') }}" alt="{{ texts.hero_overline }}"
+         width="1879" height="382" class="mx-auto h-14 sm:h-16 lg:h-20 w-auto">
+    <h1 class="font-display text-h2 text-encre mt-3">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
+    {% else %}
     <p class="text-overline font-semibold uppercase text-zellige-text">{{ texts.hero_overline }}</p>
-    <h1 class="font-display text-display text-encre mt-1">Kenza <span class="text-vert-text">&amp;</span> Julien</h1>
+    <h1 class="font-display text-display text-encre mt-1">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
+    {% endif %}
     <div class="zellige-rule max-w-[220px] mx-auto mt-3" aria-hidden="true"></div>
     <p class="text-body text-ardoise mt-4 max-w-[52ch] mx-auto">
       {{ texts.hero_intro }}
