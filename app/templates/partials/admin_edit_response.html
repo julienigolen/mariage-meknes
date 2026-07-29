@@ -1,0 +1,7 @@
+{#- Réponse d'un endpoint d'édition (app/routers/admin.py::_tbody_response) : la table
+    complète (swap principal, ciblé par hx-target="#invites-table" sur l'input qui a
+    déclenché la requête — jamais le seul <tbody>, cf. admin_invites_table.html) suivie
+    du bandeau KPI en swap "out of band" (id="kpi-row" + hx-swap-oob dans le partiel
+    lui-même) — les deux se resynchronisent en une seule requête. -#}
+{% include "partials/admin_invites_table.html" %}
+{% include "partials/admin_kpi_row.html" %}

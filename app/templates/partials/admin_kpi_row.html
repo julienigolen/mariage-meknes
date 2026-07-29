@@ -1,0 +1,35 @@
+{#- 4 cartes KPI (Patron 2026-07-29) — titre + chiffre seulement, détail du calcul en
+    tooltip natif (title="..."). hx-swap-oob="true" : inerte au rendu initial de la page
+    (admin_invites.html), actif quand ce même partiel revient dans la réponse d'un
+    endpoint d'édition (_tbody_response) — HTMX le repère par son id et le resynchronise
+    sans qu'il fasse partie du swap principal ciblé sur #invites-tbody. -#}
+<div id="kpi-row" hx-swap-oob="true" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+  <div class="bg-surface border border-bord rounded-lg shadow-sm p-4"
+       title="Statut Invité : effectif théorique de la ligne (éditable, colonne « Effectif théo. »). Statut Accepté : effectif réel déclaré au RSVP (adultes + enfants). Statut Refusé : exclu du total.">
+    <p class="text-caption uppercase tracking-wide text-ardoise font-semibold mb-2">Invités</p>
+    <p class="text-2xl font-semibold tabular-nums text-encre">{{ kpis.invites }} <span class="text-small font-medium">personnes</span></p>
+  </div>
+
+  <div class="bg-vert-veil border border-vert/30 rounded-lg shadow-sm p-4"
+       title="Somme des adultes + enfants des foyers ayant répondu « oui » au RSVP.">
+    <p class="text-caption uppercase tracking-wide text-vert-text font-semibold mb-2">Réponses positives</p>
+    <p class="text-2xl font-semibold tabular-nums text-vert-text">{{ kpis.positives_pers }} <span class="text-small font-medium">personnes ({{ kpis.positives_foyers }} foyers)</span></p>
+  </div>
+
+  <div class="bg-zellige-veil border border-zellige/30 rounded-lg shadow-sm p-4"
+       title="Foyers au statut Invité (RSVP pas encore soumis), comptés sur leur effectif théorique.">
+    <p class="text-caption uppercase tracking-wide text-zellige-text font-semibold mb-2">Réponses attendues</p>
+    <p class="text-2xl font-semibold tabular-nums text-zellige-text">{{ kpis.attendues_pers }} <span class="text-small font-medium">personnes ({{ kpis.attendues_foyers }} foyers)</span></p>
+  </div>
+
+  <div class="bg-or-veil border border-or/30 rounded-lg shadow-sm p-4"
+       title="Foyers confirmés (« oui ») ayant coché « besoin d'hôtel », une chambre par foyer, classée par son effectif. 5 personnes et plus comptent dans la case 3-4.">
+    <p class="text-caption uppercase tracking-wide text-or-text font-semibold mb-2">Chambres à prévoir</p>
+    <div class="flex gap-4">
+      <div><p class="text-2xl font-semibold tabular-nums text-or-text">{{ kpis.chambres_1_2 }}</p><p class="text-[11px] font-medium text-or-text/80">1-2 pers.</p></div>
+      <div><p class="text-2xl font-semibold tabular-nums text-or-text">{{ kpis.chambres_3_4 }}</p><p class="text-[11px] font-medium text-or-text/80">3-4 pers.</p></div>
+    </div>
+  </div>
+
+</div>

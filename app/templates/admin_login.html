@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+{% block title %}Connexion admin — Kenza &amp; Julien{% endblock %}
+{% block header %}{% endblock %}
+
+{% block content %}
+<section class="w-full flex items-center justify-center px-6 py-20">
+  <div class="w-full max-w-[380px]">
+    <div class="text-center mb-8">
+      <p class="text-overline font-semibold uppercase text-zellige-text">Back-office</p>
+      <h1 class="font-display text-h2 text-encre mt-2">Connexion</h1>
+    </div>
+    <form method="post" action="/admin/login" class="bg-surface border border-bord rounded-xl shadow-md p-8">
+      <label for="email" class="block text-small font-semibold text-encre mb-2">Email</label>
+      <input id="email" name="email" type="email" required autofocus autocomplete="username"
+             class="w-full h-12 px-4 rounded-md bg-surface border {{ 'border-danger' if error else 'border-bord-fort' }} text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none"
+             value="{{ email or '' }}">
+
+      <label for="password" class="block text-small font-semibold text-encre mb-2 mt-4">Mot de passe</label>
+      <input id="password" name="password" type="password" required autocomplete="current-password"
+             class="w-full h-12 px-4 rounded-md bg-surface border {{ 'border-danger' if error else 'border-bord-fort' }} text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+
+      {% if error %}
+      <p role="alert" class="text-small text-danger-text mt-3">{{ error }}</p>
+      {% endif %}
+
+      <button type="submit"
+              class="mt-6 w-full h-12 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        Se connecter
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

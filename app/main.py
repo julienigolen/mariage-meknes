@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import gate, lang, rsvp, site
+from app.routers import admin, gate, lang, rsvp, site
 
 app = FastAPI(title="Mariage Kenza & Julien — Meknès", docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -18,6 +18,7 @@ app.include_router(gate.router)
 app.include_router(lang.router)
 app.include_router(rsvp.router)
 app.include_router(site.router)
+app.include_router(admin.router)
 
 if settings.env == "dev":
     # En dev local (sqlite) : schéma direct. En prod Render : alembic upgrade head au démarrage.

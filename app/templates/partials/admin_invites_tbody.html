@@ -1,0 +1,142 @@
+{#- Une ligne par FOYER, pas par personne (Patron 2026-07-29) — jamais swappé seul par
+    HTMX (cf. admin_invites_table.html, hx-target="#invites-table"). Invité principal =
+    members[0], invité secondaire = members[1] s'il existe. On ne gère que 2 personnes
+    nommées par foyer : au-delà, ça se compte via Adultes/Enfants du RSVP, pas par un
+    3e nom. Ordre des colonnes : principal/famille/effectif/statut/RSVP d'abord,
+    secondaire + allergies (case et commentaire séparés) en fin de ligne. -#}
+<tbody id="invites-tbody" class="divide-y divide-bord">
+  {% for hh in households %}
+  {% set r = hh.rsvp %}
+  {% set principal = hh.members[0] if hh.members|length > 0 else None %}
+  {% set secondaire = hh.members[1] if hh.members|length > 1 else None %}
+  <tr class="hover:bg-vert-veil">
+    {#- Invité principal : nom + téléphone -#}
+    <td class="px-2 py-1">
+      {% if principal %}
+      <div class="flex items-center gap-1.5">
+        <input type="text" value="{{ principal.nom_prenom }}"
+               hx-post="/admin/invites/member/{{ principal.id }}/field/nom_prenom" name="value"
+               hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+               class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre">
+        {% if principal.statut == "ajoute_rsvp" %}
+        <span class="shrink-0 w-2 h-2 rounded-full bg-or" title="Inscrit(e) directement au RSVP — numéro non répertorié dans la liste importée" aria-label="Auto-inscrit"></span>
+        {% endif %}
+      </div>
+      {% endif %}
+    </td>
+    <td class="px-2 py-1">
+      {% if principal %}
+      <input type="text" value="{{ principal.phone }}" dir="ltr"
+             hx-post="/admin/invites/member/{{ principal.id }}/field/phone" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre tabular-nums">
+      {% endif %}
+    </td>
+
+    <td class="px-2 py-1">
+      <input type="text" value="{{ hh.import_famille_label or '' }}" placeholder="—"
+             hx-post="/admin/invites/household/{{ hh.id }}/field/import_famille_label" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
+    </td>
+    <td class="px-2 py-1">
+      {% if principal %}
+      <input type="number" min="1" max="50" value="{{ principal.effectif_theorique }}" dir="ltr"
+             hx-post="/admin/invites/member/{{ principal.id }}/field/effectif_theorique" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             title="Effectif théorique du foyer tant qu'aucune réponse RSVP n'est soumise"
+             class="w-16 h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre font-semibold tabular-nums">
+      {% endif %}
+    </td>
+    <td class="px-2 py-1 text-center">
+      {% if not r %}
+      <span class="inline-flex items-center px-3 py-1 rounded-full bg-zellige-veil text-zellige-text text-caption font-semibold">Invité</span>
+      {% elif r.presence %}
+      <span class="inline-flex items-center px-3 py-1 rounded-full bg-vert-veil text-vert-text text-caption font-semibold">Accepté</span>
+      {% else %}
+      <span class="inline-flex items-center px-3 py-1 rounded-full bg-danger-veil text-danger-text text-caption font-semibold">Refusé</span>
+      {% endif %}
+    </td>
+    <td class="px-2 py-1">
+      <select hx-post="/admin/invites/rsvp/{{ hh.id }}/field/presence" name="value"
+              hx-trigger="change" hx-target="#invites-table" hx-swap="outerHTML"
+              class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre">
+        <option value="non" {% if not (r and r.presence) %}selected{% endif %}>Non</option>
+        <option value="oui" {% if r and r.presence %}selected{% endif %}>Oui</option>
+      </select>
+    </td>
+    <td class="px-2 py-1">
+      <input type="number" min="0" max="20" value="{{ r.nb_adultes if r else 0 }}" dir="ltr"
+             hx-post="/admin/invites/rsvp/{{ hh.id }}/field/nb_adultes" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-16 h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre font-semibold tabular-nums">
+    </td>
+    <td class="px-2 py-1">
+      <input type="number" min="0" max="20" value="{{ r.nb_enfants if r else 0 }}" dir="ltr"
+             hx-post="/admin/invites/rsvp/{{ hh.id }}/field/nb_enfants" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-16 h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre font-semibold tabular-nums">
+    </td>
+    <td class="px-2 py-1">
+      <select hx-post="/admin/invites/rsvp/{{ hh.id }}/field/besoin_hotel" name="value"
+              hx-trigger="change" hx-target="#invites-table" hx-swap="outerHTML"
+              class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre">
+        <option value="non" {% if not (r and r.besoin_hotel) %}selected{% endif %}>Non</option>
+        <option value="oui" {% if r and r.besoin_hotel %}selected{% endif %}>Oui</option>
+      </select>
+    </td>
+
+    {#- Invité secondaire : édition normale s'il existe déjà, sinon deux champs vides qui
+        créent la 2e personne dès que nom ET téléphone sont renseignés (hx-include se
+        renvoie l'un l'autre pour toujours poster les deux ensemble, cf. endpoint
+        /invites/household/{id}/secondary). -#}
+    <td class="px-2 py-1">
+      {% if secondaire %}
+      <div class="flex items-center gap-1.5">
+        <input type="text" value="{{ secondaire.nom_prenom }}"
+               hx-post="/admin/invites/member/{{ secondaire.id }}/field/nom_prenom" name="value"
+               hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+               class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre">
+        {% if secondaire.statut == "ajoute_rsvp" %}
+        <span class="shrink-0 w-2 h-2 rounded-full bg-or" title="Inscrit(e) directement au RSVP — numéro non répertorié dans la liste importée" aria-label="Auto-inscrit"></span>
+        {% endif %}
+      </div>
+      {% else %}
+      <input type="text" value="" placeholder="Ajouter…" id="sec-nom-{{ hh.id }}" name="nom_prenom"
+             hx-post="/admin/invites/household/{{ hh.id }}/secondary"
+             hx-trigger="blur changed" hx-include="#sec-tel-{{ hh.id }}" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
+      {% endif %}
+    </td>
+    <td class="px-2 py-1">
+      {% if secondaire %}
+      <input type="text" value="{{ secondaire.phone }}" dir="ltr"
+             hx-post="/admin/invites/member/{{ secondaire.id }}/field/phone" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre tabular-nums">
+      {% else %}
+      <input type="text" value="" placeholder="Ajouter…" id="sec-tel-{{ hh.id }}" name="phone" dir="ltr"
+             hx-post="/admin/invites/household/{{ hh.id }}/secondary"
+             hx-trigger="blur changed" hx-include="#sec-nom-{{ hh.id }}" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise tabular-nums">
+      {% endif %}
+    </td>
+
+    {#- Allergies : case oui/non et commentaire séparés en deux colonnes (Patron 2026-07-29). -#}
+    <td class="px-2 py-1">
+      <select hx-post="/admin/invites/rsvp/{{ hh.id }}/field/allergies_bool" name="value"
+              hx-trigger="change" hx-target="#invites-table" hx-swap="outerHTML"
+              class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre">
+        <option value="non" {% if not (r and r.allergies_bool) %}selected{% endif %}>Non</option>
+        <option value="oui" {% if r and r.allergies_bool %}selected{% endif %}>Oui</option>
+      </select>
+    </td>
+    <td class="px-2 py-1">
+      <input type="text" value="{{ r.allergies_texte if r and r.allergies_texte else '' }}" placeholder="détail"
+             hx-post="/admin/invites/rsvp/{{ hh.id }}/field/allergies_texte" name="value"
+             hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
+             class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>

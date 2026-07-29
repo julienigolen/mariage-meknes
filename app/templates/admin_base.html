@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Back-office (charte §5.9) : outil pour Kenza & Julien uniquement, pas pour les invités.
+     Français uniquement (pas de sélecteur de langue) — décision DP 2026-07-28 : ajouter le
+     système i18n complet ici n'aurait bénéficié à personne d'autre que les deux mariés, qui
+     lisent le français. Pas le format « faire-part » (carton/cadre §4.5) non plus : c'est un
+     outil de travail, pas une invitation. -->
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>{% block title %}Admin — Kenza &amp; Julien{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+  {% include "partials/tailwind_config.html" %}
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <link rel="stylesheet" href="{{ asset('/static/css/app.css') }}">
+</head>
+<body class="bg-dune font-body text-body text-encre min-h-screen flex flex-col">
+  {% block header %}
+  <header class="bg-surface border-b-2 border-bord">
+    <div class="max-w-content mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+      <span class="font-display text-h4 text-encre">Kenza <span class="text-vert-text">&amp;</span> Julien — Admin</span>
+      {% if admin %}
+      <form method="post" action="/admin/logout">
+        <button type="submit" class="text-small text-zellige-text hover:underline">Se déconnecter</button>
+      </form>
+      {% endif %}
+    </div>
+  </header>
+  {% endblock %}
+
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

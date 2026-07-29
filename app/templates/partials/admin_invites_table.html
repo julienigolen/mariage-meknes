@@ -1,0 +1,44 @@
+{#- Table complète (thead + tbody), utilisée pour le rendu initial ET comme cible de swap
+    HTMX (id="invites-table") après chaque édition. Le swap cible la <table> entière, pas
+    le seul <tbody> : un <tbody> renvoyé seul (même suivi du fragment KPI en OOB) se fait
+    déformer par le navigateur, qui refuse un <tbody> hors d'un <table> et "foster-parente"
+    tout ce qui l'entoure ailleurs dans le DOM — c'est ce qui cassait le tableau après une
+    édition (constaté par le Patron le 2026-07-29). Un <table>...</table> complet, lui,
+    s'analyse correctement même hors contexte.
+
+    Une ligne par FOYER, pas par personne (Patron 2026-07-29) : invité principal +
+    invité secondaire, deux personnes nommées maximum — cf. admin_invites_tbody.html.
+
+    Ordre des colonnes (Patron 2026-07-29) : les champs les plus consultés d'abord
+    (principal, famille, effectif, statut/RSVP), invité secondaire et allergies
+    (avec son commentaire séparé de la case oui/non) repoussés en fin de tableau —
+    moins souvent utiles au jour le jour.
+
+    Largeurs de colonne explicites (Patron 2026-07-29, « afficher toutes les
+    informations malgré le nombre de colonnes ») : en `table-auto` par défaut, un
+    <input class="w-full"> n'a pas de largeur de contenu propre — le navigateur
+    réduisait les colonnes jusqu'à tronquer noms/téléphones au lieu de les afficher
+    en entier. Un `min-w-[…]` par `<th>` force assez de place pour tout lire sans
+    coupure ; la table dépasse alors la largeur de l'écran, mais le conteneur
+    parent (`overflow-x-auto`) la fait défiler horizontalement — comme un vrai
+    tableur, plutôt que de sacrifier la lisibilité de chaque cellule. -#}
+<table id="invites-table" class="w-full min-w-[1850px]">
+  <thead>
+    <tr class="border-b border-bord">
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Invité principal</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[175px]">Tél. principal</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Famille</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]" title="Effectif que représente le foyer avant réponse RSVP">Effectif théo.</th>
+      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[100px]">Statut</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Présence</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[80px]">Adultes</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[80px]">Enfants</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Hôtel</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Invité secondaire</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[175px]">Tél. secondaire</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Allergies</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Commentaire allergies</th>
+    </tr>
+  </thead>
+  {% include "partials/admin_invites_tbody.html" %}
+</table>

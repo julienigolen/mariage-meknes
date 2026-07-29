@@ -1,0 +1,45 @@
+{% extends "admin_base.html" %}
+{% block title %}Invités & RSVP — Admin{% endblock %}
+
+{% block content %}
+<section class="w-full px-6 lg:px-8 py-8">
+  <div class="max-w-content mx-auto">
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <h1 class="font-display text-h2 text-encre">Invités &amp; RSVP</h1>
+        <p class="text-small text-ardoise mt-1">{{ households|length }} foyer(s). Cliquez une cellule, modifiez, sortez du champ — c'est enregistré.</p>
+      </div>
+      <div>
+        <p class="text-small font-semibold text-encre mb-1.5">Importer un Excel</p>
+        <div class="flex items-center gap-2">
+          <form method="post" action="/admin/import" enctype="multipart/form-data" class="flex items-center gap-2">
+            <input type="file" name="fichier" accept=".xlsx" required
+                   class="text-small text-ardoise file:h-9 file:px-3 file:rounded-md file:border-0 file:bg-vert file:text-white file:font-semibold hover:file:bg-vert-hover file:cursor-pointer file:mr-2">
+            <button type="submit"
+                    class="h-9 px-4 rounded-md border border-zellige text-zellige-text font-semibold hover:bg-zellige-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
+              Importer
+            </button>
+          </form>
+          <a href="/admin/export"
+             class="h-9 px-4 inline-flex items-center rounded-md border border-bord-fort text-encre font-semibold hover:bg-sable transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
+            Exporter (.xlsx)
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {% include "partials/admin_kpi_row.html" %}
+
+    {% if not households %}
+    <div class="bg-surface border border-bord rounded-xl p-10 text-center">
+      <p class="text-body-lg text-encre font-medium">Aucun invité pour l'instant.</p>
+      <p class="text-small text-ardoise mt-2">Importez votre liste au format Excel avec le formulaire ci-dessus.</p>
+    </div>
+    {% else %}
+    <div class="bg-surface border border-bord rounded-xl shadow-sm overflow-x-auto">
+      {% include "partials/admin_invites_table.html" %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
