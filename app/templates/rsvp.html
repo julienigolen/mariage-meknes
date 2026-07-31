@@ -35,10 +35,10 @@
     {% endif %}
 
     {% if step == "new" %}
-    <!-- Numéro absent de la liste importée mais au format plausible FR/MA/US
-         (Patron 2026-07-28, app/routers/rsvp.py::rsvp_lookup) : on demande le nom
-         plutôt que de bloquer. Crée un nouveau foyer (statut ajoute_rsvp) à l'étape
-         suivante (/rsvp/join). -->
+    <!-- Numéro absent de la liste importée (Patron 2026-07-28, élargi 2026-08-01 :
+         plus de filtre de format, app/routers/rsvp.py::rsvp_lookup) : on demande le
+         nom plutôt que de bloquer. Crée un nouveau foyer (statut ajoute_rsvp) à
+         l'étape suivante (/rsvp/join). -->
     <form method="post" action="/rsvp/join" class="bg-surface border border-bord rounded-xl shadow-md p-8 max-w-[420px] mx-auto">
       <input type="hidden" name="phone" value="{{ phone }}">
       <p class="text-small text-ardoise mb-4">{{ texts.rsvp_new_intro }}</p>

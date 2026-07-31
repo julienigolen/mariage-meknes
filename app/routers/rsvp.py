@@ -19,7 +19,7 @@ from app.database import get_db
 from app.gate import gate_redirect, known_household, set_household_cookie
 from app.i18n.context import lang_context
 from app.models import Household, HouseholdMember, Rsvp
-from app.phone import is_plausible_phone, normalize_phone, phone_candidates
+from app.phone import normalize_phone, phone_candidates
 from app.templates_engine import templates
 
 router = APIRouter()
@@ -89,17 +89,16 @@ def rsvp_lookup(request: Request, phone: str = Form(""), db: Session = Depends(g
     ).scalar_one_or_none()
 
     if member is None:
-        # Numéro absent de la liste importée : s'il ressemble à un vrai numéro
-        # FR/MA/US, on propose de créer le foyer plutôt que de bloquer avec une
-        # erreur (Patron 2026-07-28) — sinon, erreur inchangée.
-        if is_plausible_phone(phone):
-            return templates.TemplateResponse(
-                request,
-                "rsvp.html",
-                {"step": "new", "error": False, "phone": normalize_phone(phone), "lang_switch_path": "/rsvp", **ctx},
-            )
+        # Numéro absent de la liste importée : on propose de créer le foyer plutôt
+        # que de bloquer avec une erreur (Patron 2026-07-28). Élargi le 2026-08-01
+        # (Patron) : la liste importée n'a rien d'exhaustif garanti — un numéro
+        # dans un format non reconnu par `is_plausible_phone` (l'ex-filtre FR/MA/US)
+        # bloquait à tort un vrai invité entré via le code commun ; tout numéro
+        # non trouvé mène désormais à la saisie du nom, sans filtre de format.
         return templates.TemplateResponse(
-            request, "rsvp.html", {"step": "phone", "error": True, "lang_switch_path": "/rsvp", **ctx}
+            request,
+            "rsvp.html",
+            {"step": "new", "error": False, "phone": normalize_phone(phone), "lang_switch_path": "/rsvp", **ctx},
         )
 
     return _form_step_response(request, ctx, member.household, member)
@@ -107,14 +106,16 @@ def rsvp_lookup(request: Request, phone: str = Form(""), db: Session = Depends(g
 
 @router.post("/rsvp/join")
 def rsvp_join(request: Request, phone: str = Form(""), nom_prenom: str = Form(""), db: Session = Depends(get_db)):
-    """Création d'un foyer par un invité au numéro non répertorié mais plausible
-    (Patron 2026-07-28) — étape intermédiaire après /rsvp/lookup, cf. step "new"."""
+    """Création d'un foyer par un invité au numéro non répertorié (Patron 2026-07-28,
+    élargi 2026-08-01 — plus de filtre de format sur le numéro) — étape
+    intermédiaire après /rsvp/lookup, cf. step "new"."""
     if (r := gate_redirect(request)) is not None:
         return r
     ctx = lang_context(request)
+    phone = phone.strip()
     nom_prenom = nom_prenom.strip()
 
-    if not is_plausible_phone(phone) or not nom_prenom:
+    if not phone or not nom_prenom:
         return templates.TemplateResponse(
             request, "rsvp.html", {"step": "phone", "error": True, "lang_switch_path": "/rsvp", **ctx}
         )
