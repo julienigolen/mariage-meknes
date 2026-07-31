@@ -10,13 +10,24 @@
   <!-- Rythme resserré (charte §5.3) : le bloc de tête flottait, la façade arrivait trop bas.
        L'aération vient du blanc autour du carton, pas de l'intérieur du bloc. -->
   <div class="max-w-wide mx-auto px-6 lg:px-8 pt-8 lg:pt-12 text-center">
+    <!-- Bandeau de tête (Patron, 2026-07-31) : Basmala + verset Ar-Roum 30:21 + « صدق الله
+         العظيم » en une seule calligraphie, posée au-dessus du lockup, TOUTES LANGUES.
+         Image détourée (fond transparent) : le fond crème d'origine aurait fait une plaque
+         opaque sur le dégradé `hero-sable`. Le filigrane ✦ du générateur a été effacé.
+         Largeur réduite de moitié sur ordinateur (Patron, 2026-07-31) : 760 -> 380 px, elle
+         écrasait le lockup. Une seule valeur pour toutes les tailles d'écran plutôt qu'une
+         cascade : sur mobile `w-full` plafonne déjà autour de 342 px, la cascade
+         560/680/760 ne servait donc qu'au-dessus de la tablette. À 380 px, la ligne du
+         verset mesure ~29 px de haut (mesure sur l'asset) — lisible, mais les diacritiques
+         sont fines : c'est le plancher, ne pas descendre en dessous sans recomposer la
+         calligraphie sur plusieurs lignes. -->
+    <img src="{{ asset('/static/img/basmala_verset.webp') }}" alt="{{ texts.hero_basmala_verset_alt }}"
+         width="1714" height="550"
+         class="mx-auto w-full max-w-[380px] mb-6 lg:mb-8">
     {% if lang == 'ar' %}
-    <!-- Basmala en calligraphie (Patron, 2026-07-28) : image générée puis détourée
-         (fond transparent), remplace le texte Cairo — Cairo reste géométrique/détaché,
-         aucune police web n'a le geste demandé. Plus grande que le lockup, qui est réduit
-         UNIQUEMENT en arabe pour garder l'équilibre (charte §5.3/§3.1 à documenter). -->
-    <img src="{{ asset('/static/img/basmala.webp') }}" alt="{{ texts.hero_overline }}"
-         width="1879" height="382" class="mx-auto h-14 sm:h-16 lg:h-20 w-auto">
+    <!-- La Basmala seule (`basmala.webp`) a été retirée d'ici : elle fait doublon avec la
+         première ligne du bandeau ci-dessus. Le lockup reste en `text-h2` en arabe, réduit
+         pour garder l'équilibre avec la calligraphie (charte §5.3/§3.1). -->
     <h1 class="font-display text-h2 text-encre mt-3">{{ texts.brand_name1 }} <span class="text-vert-text">{{ texts.brand_amp }}</span> {{ texts.brand_name2 }}</h1>
     {% else %}
     <!-- "SAVE THE DATE" retiré en FR/EN (Patron, 2026-07-30) : pure redondance avec la
@@ -29,22 +40,15 @@
     <p class="text-body text-ardoise mt-4 max-w-[52ch] mx-auto">
       {{ texts.hero_intro }}
     </p>
-    <!-- Date, lieu et compte à rebours sur une seule ligne : trois informations de même
-         nature (les coordonnées de l'événement), elles n'ont pas à s'empiler.
-         dir="ltr" sur le compte à rebours (charte §4.4/§9) : "J−88" est un contenu
-         numérique, isolé même une fois la page en arabe. -->
+    <!-- Date et lieu sur une seule ligne : deux informations de même nature (les
+         coordonnées de l'événement), elles n'ont pas à s'empiler.
+         Compte à rebours retiré (Patron, 2026-07-31) — il occupait la troisième colonne.
+         Les clés `hero_countdown_label`/`hero_countdown_unit` et la variable `days_left`
+         (routers/site.py) sont conservées : la remise en place ne coûte qu'un bloc ici. -->
     <div class="mt-5 flex flex-col sm:flex-row items-center justify-center gap-x-8 gap-y-3">
       <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_date_label }}</p><p class="font-display text-h4 text-encre mt-0.5">{{ texts.hero_date_value }}</p></div>
       <div class="hidden sm:block w-px h-9 bg-bord" aria-hidden="true"></div>
       <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_lieu_label }}</p><p class="font-display text-h4 text-encre mt-0.5">{{ texts.hero_lieu_value }}</p></div>
-      {% if days_left > 0 %}
-      <div class="hidden sm:block w-px h-9 bg-bord" aria-hidden="true"></div>
-      <!-- dir="ltr" NE DOIT PAS être posé sur le <p> lui-même (charte §4.4/§9) : ça change
-           son text-align par défaut (start=left pour un élément ltr) et le désaligne de ses
-           frères qui restent en RTL ambiant (feedback Patron 2026-07-30). La bonne isolation
-           passe par <bdi> autour des seuls chiffres — le <p> garde l'alignement du contexte. -->
-      <div><p class="text-overline uppercase text-ardoise">{{ texts.hero_countdown_label }}</p><p class="font-display text-h4 text-or-text mt-0.5"><bdi dir="ltr">{{ days_left }}</bdi> {{ texts.hero_countdown_unit }}</p></div>
-      {% endif %}
     </div>
     {% if my_rsvp %}
     <!-- Foyer déjà répondu (feedback Patron 2026-07-29) : jamais un aplat vert plein pour
@@ -192,24 +196,13 @@
   </div>
 </section>
 
-<!-- Verset coranique en clôture (Patron, 2026-07-30 — « pas un meilleur endroit que
-     entre la photo et le Programme ? ») : déplacé de son interlude initial (aucun lien
-     thématique avec ses voisins d'alors) vers une bénédiction de fin, juste avant le
-     footer — après le programme, le lieu, la tenue et le guide voyage, avant que
-     l'invité quitte la page. Le verset se suffit à lui-même (Basmala en ouverture,
-     "صدق الله العظيم" en clôture dans l'image même), il n'a pas besoin d'être en tête
-     de page pour être complet. Validation religieuse/culturelle en attente côté
-     famille (Patron) — le Patron doit leur montrer avant confirmation définitive.
-     FR/EN uniquement, l'arabe garde sa Basmala dans le hero (§3.4), pas de doublon.
-     Fond `dune`, pas `surface` : la section "Venir à Meknès" juste avant est en
-     `surface`, deux sections consécutives ne partagent jamais le même fond (§2.5). -->
-{% if lang != 'ar' %}
-<section class="w-full bg-dune">
-  <div class="max-w-wide mx-auto px-6 lg:px-8 py-14 lg:py-20 text-center">
-    <img src="{{ asset('/static/img/verse.webp') }}" alt="{{ texts.hero_verse_alt }}"
-         width="891" height="866" class="mx-auto w-full max-w-[190px] sm:max-w-[230px]">
-  </div>
-</section>
-{% endif %}
+<!-- Section « verset en clôture » (`verse.webp`) retirée le 2026-07-31 (Patron).
+     Elle datait d'avant le bandeau de tête : depuis que `basmala_verset.webp` ouvre le
+     hero dans toutes les langues, son verset était LE MÊME (Ar-Roum 30:21) — un invité
+     francophone le lisait deux fois sur la même page. La bénédiction reste donc présente,
+     mais une seule fois, en ouverture.
+     `verse.webp` n'est plus référencée nulle part ; le fichier est conservé sur disque
+     tant que le Patron ne valide pas sa suppression. Idem `basmala.webp`. -->
+
 
 {% endblock %}

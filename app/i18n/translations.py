@@ -52,6 +52,11 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # ---- Hero ----
         "hero_overline": "Save the date",
         "hero_verse_alt": "Verset coranique sur le mariage (Sourate Ar-Roum, 30:21), calligraphié",
+        # Alt du bandeau de tête : décrit les TROIS parties de la calligraphie (Basmala,
+        # verset, formule de clôture), là où hero_verse_alt ne couvre que le verset seul.
+        "hero_basmala_verset_alt": "Calligraphie : « Au nom de Dieu, le Clément, le Miséricordieux » ; "
+                                    "verset coranique sur le mariage (Sourate Ar-Roum, 30:21) ; "
+                                    "« Dieu le Très-Grand a dit vrai »",
         "hero_intro": "Nous avons la joie de vous convier à notre mariage qui aura lieu au Maroc "
                        "entourés de nos deux familles et de nos deux cultures.",
         "hero_date_label": "Date",
@@ -174,6 +179,9 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # ---- Hero ----
         "hero_overline": "Save the date",
         "hero_verse_alt": "Quranic verse on marriage (Surah Ar-Rum, 30:21), calligraphy",
+        "hero_basmala_verset_alt": "Calligraphy: “In the name of God, the Most Gracious, the Most Merciful”; "
+                                    "Quranic verse on marriage (Surah Ar-Rum, 30:21); "
+                                    "“God the Almighty has spoken the truth”",
         "hero_intro": "We're delighted to invite you to our wedding, taking place in Morocco, "
                        "surrounded by our two families and our two cultures.",
         "hero_date_label": "Date",
@@ -317,6 +325,11 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
         # dédiée ou asset image), pas juste une clé de traduction. Dis-le si tu veux
         # que j'enchaîne dessus.
         "hero_overline": "بسم الله الرحمن الرحيم",
+        # Alt en arabe : on restitue le texte lui-même (un lecteur d'écran arabe le lira
+        # tel quel), pas une description — contrairement au FR/EN où il faut traduire.
+        "hero_basmala_verset_alt": "بسم الله الرحمن الرحيم — "
+                                    "«وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً» — "
+                                    "صدق الله العظيم",
         "hero_intro": "يسعدنا أن ندعوكم إلى حفل زفافنا الذي سيقام في المغرب، محاطين بعائلتينا وثقافتينا.",
         "hero_date_label": "التاريخ",
         "hero_date_value": "الجمعة 23 أكتوبر 2026",
