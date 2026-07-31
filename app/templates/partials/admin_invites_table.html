@@ -21,23 +21,36 @@
     en entier. Un `min-w-[…]` par `<th>` force assez de place pour tout lire sans
     coupure ; la table dépasse alors la largeur de l'écran, mais le conteneur
     parent (`overflow-x-auto`) la fait défiler horizontalement — comme un vrai
-    tableur, plutôt que de sacrifier la lisibilité de chaque cellule. -#}
+    tableur, plutôt que de sacrifier la lisibilité de chaque cellule.
+
+    Tri + filtres (Patron 2026-08-01) : chaque <th> (macro `th` ci-dessous) porte
+    data-sort-index (position alignée sur les <td> de admin_invites_tbody.html) et
+    data-sort-type. Le script de admin_invites.html s'en sert pour réordonner les
+    <tr> et écrit la flèche dans <span class="sort-arrow"> — l'état de tri/filtre
+    vit côté JS, pas dans ce HTML régénéré à chaque édition (swap outerHTML de
+    toute la table), et est réappliqué après coup (écoute htmx:afterSwap). -#}
 <table id="invites-table" class="w-full min-w-[1850px]">
   <thead>
     <tr class="border-b border-bord">
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Invité principal</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[175px]">Tél. principal</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Famille</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]" title="Effectif que représente le foyer avant réponse RSVP">Effectif théo.</th>
-      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[100px]">Statut</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Présence</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[80px]">Adultes</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[80px]">Enfants</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Hôtel</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Invité secondaire</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[175px]">Tél. secondaire</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[90px]">Allergies</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Commentaire allergies</th>
+      {%- macro th(label, index, min_w, type='text', extra='', title='') %}
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 {{ min_w }} {{ extra }} cursor-pointer select-none hover:text-encre"
+          data-sort-index="{{ index }}" data-sort-type="{{ type }}"{% if title %} title="{{ title }}"{% endif %}>
+        <span class="inline-flex items-center gap-1">{{ label }}<span class="sort-arrow text-zellige-text w-3 inline-block" aria-hidden="true"></span></span>
+      </th>
+      {%- endmacro %}
+      {{ th("Invité principal", 0, "min-w-[220px]") }}
+      {{ th("Tél. principal", 1, "min-w-[175px]") }}
+      {{ th("Famille", 2, "min-w-[200px]") }}
+      {{ th("Effectif théo.", 3, "min-w-[90px]", type='number', title="Effectif que représente le foyer avant réponse RSVP") }}
+      {{ th("Statut", 4, "min-w-[100px]", extra='text-center') }}
+      {{ th("Présence", 5, "min-w-[90px]") }}
+      {{ th("Adultes", 6, "min-w-[80px]", type='number') }}
+      {{ th("Enfants", 7, "min-w-[80px]", type='number') }}
+      {{ th("Hôtel", 8, "min-w-[90px]") }}
+      {{ th("Invité secondaire", 9, "min-w-[220px]") }}
+      {{ th("Tél. secondaire", 10, "min-w-[175px]") }}
+      {{ th("Allergies", 11, "min-w-[90px]") }}
+      {{ th("Commentaire allergies", 12, "min-w-[220px]") }}
     </tr>
   </thead>
   {% include "partials/admin_invites_tbody.html" %}

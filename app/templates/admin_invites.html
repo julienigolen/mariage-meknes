@@ -3,7 +3,11 @@
 
 {% block content %}
 <section class="w-full px-6 lg:px-8 py-8">
-  <div class="max-w-content mx-auto">
+  {#- Pleine largeur (Patron 2026-08-01) : contrairement au reste du site, cette page
+      n'est pas un "carton" d'invitation (cf. admin_base.html) — le token `max-w-content`
+      qui cadre les pages invité n'a pas lieu d'être ici, il ne fait que réduire l'espace
+      dispo pour un tableau de 13 colonnes qui a déjà son propre défilement horizontal. -#}
+  <div>
     <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
       <div>
         <h1 class="font-display text-h2 text-encre">Invités &amp; RSVP</h1>
@@ -36,10 +40,113 @@
       <p class="text-small text-ardoise mt-2">Importez votre liste au format Excel avec le formulaire ci-dessus.</p>
     </div>
     {% else %}
+    {#- Filtres (Patron 2026-08-01) : en dehors de #invites-table, donc jamais touchés
+        par le swap outerHTML d'une édition (cf. admin_invites_table.html) — la saisie
+        de l'invité reste intacte pendant qu'il continue à modifier le tableau. -#}
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <input type="search" id="invites-filter-text" placeholder="Rechercher (nom, téléphone, famille…)"
+             class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none w-full sm:w-72">
+      <select id="invites-filter-statut"
+              class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+        <option value="">Tous statuts</option>
+        <option value="Invité">Invité</option>
+        <option value="Accepté">Accepté</option>
+        <option value="Refusé">Refusé</option>
+      </select>
+      <p id="invites-filter-count" class="text-small text-ardoise"></p>
+    </div>
     <div class="bg-surface border border-bord rounded-xl shadow-sm overflow-x-auto">
       {% include "partials/admin_invites_table.html" %}
     </div>
     {% endif %}
   </div>
 </section>
+
+<script>
+(function () {
+  // Tri clic-sur-en-tête + filtres (Patron 2026-08-01). L'état vit ici, pas dans le
+  // HTML de la table : #invites-table est régénéré en entier (swap outerHTML) à
+  // chaque édition de cellule (cf. admin_invites_table.html), donc tri/filtre sont
+  // réappliqués après coup plutôt que d'espérer survivre au swap.
+  var filterText = document.getElementById('invites-filter-text');
+  var filterStatut = document.getElementById('invites-filter-statut');
+  var countLabel = document.getElementById('invites-filter-count');
+  if (!filterText) return;  // page sans tableau (aucun invité importé)
+
+  var state = { sortIndex: null, sortDir: 1 };
+
+  function cellValue(td) {
+    if (!td) return '';
+    var input = td.querySelector('input');
+    if (input) return input.value;
+    var select = td.querySelector('select');
+    if (select) return select.options[select.selectedIndex].text;
+    return td.textContent.trim();
+  }
+
+  function rowMatches(row) {
+    var statut = filterStatut.value;
+    if (statut && cellValue(row.cells[4]) !== statut) return false;
+    var q = filterText.value.trim().toLowerCase();
+    if (!q) return true;
+    for (var i = 0; i < row.cells.length; i++) {
+      if (cellValue(row.cells[i]).toLowerCase().indexOf(q) !== -1) return true;
+    }
+    return false;
+  }
+
+  function applyState() {
+    var table = document.getElementById('invites-table');
+    if (!table) return;
+    var tbody = table.querySelector('tbody');
+    var headers = table.querySelectorAll('th[data-sort-index]');
+    var rows = Array.prototype.slice.call(tbody.rows);
+
+    if (state.sortIndex !== null) {
+      var idx = state.sortIndex;
+      var type = headers[idx].getAttribute('data-sort-type');
+      var dir = state.sortDir;
+      rows.sort(function (a, b) {
+        var va = cellValue(a.cells[idx]);
+        var vb = cellValue(b.cells[idx]);
+        if (type === 'number') {
+          return (parseFloat(va || 0) - parseFloat(vb || 0)) * dir;
+        }
+        return va.localeCompare(vb, 'fr', { sensitivity: 'base' }) * dir;
+      });
+      rows.forEach(function (row) { tbody.appendChild(row); });
+    }
+
+    var visible = 0;
+    rows.forEach(function (row) {
+      var show = rowMatches(row);
+      row.style.display = show ? '' : 'none';
+      if (show) visible += 1;
+    });
+    countLabel.textContent = visible + ' / ' + rows.length + ' foyer(s) affiché(s)';
+
+    headers.forEach(function (thEl) {
+      var arrow = thEl.querySelector('.sort-arrow');
+      var isActive = parseInt(thEl.getAttribute('data-sort-index'), 10) === state.sortIndex;
+      thEl.setAttribute('aria-sort', isActive ? (state.sortDir === 1 ? 'ascending' : 'descending') : 'none');
+      if (arrow) arrow.textContent = isActive ? (state.sortDir === 1 ? '▲' : '▼') : '';
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var thEl = e.target.closest('#invites-table th[data-sort-index]');
+    if (!thEl) return;
+    var idx = parseInt(thEl.getAttribute('data-sort-index'), 10);
+    state.sortDir = (state.sortIndex === idx) ? -state.sortDir : 1;
+    state.sortIndex = idx;
+    applyState();
+  });
+
+  filterText.addEventListener('input', applyState);
+  filterStatut.addEventListener('change', applyState);
+  document.body.addEventListener('htmx:afterSwap', applyState);
+
+  applyState();
+})();
+</script>
 {% endblock %}
