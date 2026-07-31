@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./dev.db"          # Postgres sur Render (injecté par render.yaml)
     secret_key: str = "dev-secret-change-me"          # signe le cookie de la porte
     access_code: str = "meknes2026"                   # code commun invités (changer en prod !)
+    site_url: str = "https://mariage-maroc.igolen.com"  # og:url/og:image (absolus) — cf. base.html
     gate_cookie_name: str = "kj_gate"
     gate_max_age: int = 90 * 24 * 3600                # 90 jours
     household_cookie_name: str = "kj_household"       # foyer reconnu (entrée par tel ou RSVP) — feedback 2026-07-29

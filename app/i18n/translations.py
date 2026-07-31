@@ -24,6 +24,7 @@ DEFAULT_LANG = "fr"
 TRANSLATIONS: dict[str, dict[str, Any]] = {
     "fr": {
         "meta_title": "Kenza & Julien — Meknès, 23 octobre 2026",
+        "meta_description": "Palais Laraki, Meknès — vendredi 23 octobre 2026.",
 
         # ---- Identité (lockup, §1.1/§3.4) ----
         "brand_name1": "Kenza",
@@ -151,6 +152,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     },
     "en": {
         "meta_title": "Kenza & Julien — Meknès, October 23, 2026",
+        "meta_description": "Palais Laraki, Meknès — Friday, October 23, 2026.",
 
         # ---- Identity (lockup, §1.1/§3.4) ----
         "brand_name1": "Kenza",
@@ -291,6 +293,7 @@ TRANSLATIONS: dict[str, dict[str, Any]] = {
     # tournures figées, nuances) : c'est un faire-part, pas une notice technique.
     "ar": {
         "meta_title": "كنزة و جوليان — مكناس، 23 أكتوبر 2026",
+        "meta_description": "قصر العراقي، مكناس — الجمعة 23 أكتوبر 2026.",
 
         # ---- Identité (lockup, §1.1/§3.4) ----
         "brand_name1": "كنزة",

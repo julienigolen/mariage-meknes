@@ -7,6 +7,24 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <title>{% block title %}{{ texts.meta_title }}{% endblock %}</title>
 
+  <!-- Open Graph (Patron 2026-08-01) : `robots` ci-dessus ne concerne QUE les moteurs de
+       recherche (Google/Bing) -- le bot de preview WhatsApp/Telegram/iMessage l'ignore et
+       ne lit que ces balises og:*, absentes jusqu'ici (aucune preview au partage d'un lien).
+       `/` est derriere la porte a code : le bot anonyme n'y arrive jamais, ces balises sur
+       CE base.html couvrent donc en pratique la porte (/entree, premiere page vue sans
+       cookie) sans qu'il faille contourner l'auth pour lui. og:image/og:url doivent etre en
+       ABSOLU (site_url, app/config.py) -- une URL relative est ignoree par la plupart des
+       bots de preview. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ texts.meta_title }}">
+  <meta property="og:description" content="{{ texts.meta_description }}">
+  <meta property="og:image" content="{{ settings.site_url }}{{ asset('/static/img/og.png') }}">
+  <meta property="og:url" content="{{ settings.site_url }}{{ request.url.path }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ texts.meta_title }}">
+  <meta name="twitter:description" content="{{ texts.meta_description }}">
+  <meta name="twitter:image" content="{{ settings.site_url }}{{ asset('/static/img/og.png') }}">
+
   <!-- Polices : Fraunces + Plus Jakarta Sans (FR/EN) + Cairo (AR, corps/UI) + Amiri
        (AR, titres — décision Patron 2026-07-28, remplace Cairo dans ce rôle : Naskh
        lié, plus proche du geste calligraphique que le sans-serif géométrique de Cairo,

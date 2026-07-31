@@ -2,6 +2,8 @@ from pathlib import Path
 
 from fastapi.templating import Jinja2Templates
 
+from app.config import settings
+
 _BASE = Path(__file__).parent
 _STATIC = _BASE / "static"
 
@@ -28,3 +30,4 @@ def asset(path: str) -> str:
 
 
 templates.env.globals["asset"] = asset
+templates.env.globals["settings"] = settings
