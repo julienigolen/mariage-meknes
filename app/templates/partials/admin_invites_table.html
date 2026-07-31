@@ -51,6 +51,8 @@
       {{ th("Tél. secondaire", 10, "min-w-[175px]") }}
       {{ th("Allergies", 11, "min-w-[90px]") }}
       {{ th("Commentaire allergies", 12, "min-w-[220px]") }}
+      {#- Pas de data-sort-index : colonne d'action, rien à trier (Patron 2026-08-01). -#}
+      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[110px]">Actions</th>
     </tr>
   </thead>
   {% include "partials/admin_invites_tbody.html" %}

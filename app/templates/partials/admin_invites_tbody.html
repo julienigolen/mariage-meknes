@@ -137,6 +137,21 @@
              hx-trigger="blur changed" hx-target="#invites-table" hx-swap="outerHTML"
              class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
     </td>
+
+    {#- Suppression du foyer entier (Patron 2026-08-01) : cascade ORM sur ses membres +
+        son RSVP (Household.members/.rsvp, cascade="all, delete-orphan", app/models.py).
+        hx-confirm affiche la confirmation native du navigateur avant l'envoi -- pas de
+        vérification supplémentaire côté serveur, la donnée est irremplaçable (README)
+        mais l'usage reste 2 personnes sur quelques dizaines de lignes. -#}
+    <td class="px-2 py-1 text-center">
+      <button type="button"
+              hx-delete="/admin/invites/household/{{ hh.id }}"
+              hx-target="#invites-table" hx-swap="outerHTML"
+              hx-confirm="Supprimer définitivement le foyer de {{ principal.nom_prenom if principal else 'ce foyer' }}{{ ' et ' ~ secondaire.nom_prenom if secondaire else '' }} ? Cette action est irréversible."
+              class="h-9 px-3 rounded-md border border-danger text-danger-text font-semibold text-small hover:bg-danger-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        Supprimer
+      </button>
+    </td>
   </tr>
   {% endfor %}
 </tbody>

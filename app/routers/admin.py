@@ -293,3 +293,17 @@ def admin_edit_rsvp(
             setattr(rsvp, field, value.strip() or None)
             db.commit()
     return _tbody_response(request, db)
+
+
+@router.delete("/invites/household/{household_id}")
+def admin_delete_household(household_id: int, request: Request, db: Session = Depends(get_db)):
+    """Suppression du foyer entier (Patron 2026-08-01), confirmée côté client par
+    hx-confirm (cf. admin_invites_tbody.html) — cascade ORM sur ses membres et son
+    RSVP (Household.members/.rsvp, app/models.py)."""
+    if (r := admin_redirect(request)) is not None:
+        return r
+    household = db.get(Household, household_id)
+    if household is not None:
+        db.delete(household)
+        db.commit()
+    return _tbody_response(request, db)
