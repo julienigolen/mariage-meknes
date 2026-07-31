@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.gate import gate_redirect, known_household_id, set_household_cookie
+from app.gate import gate_redirect, known_household, set_household_cookie
 from app.i18n.context import lang_context
 from app.models import Household, HouseholdMember, Rsvp
 from app.phone import is_plausible_phone, normalize_phone, phone_candidates
@@ -39,7 +39,7 @@ def _form_step_response(request: Request, ctx: dict, household: Household, membe
             **ctx,
         },
     )
-    set_household_cookie(resp, household.id)
+    set_household_cookie(resp, household.id, member.id)
     return resp
 
 
@@ -49,15 +49,16 @@ def rsvp_page(request: Request, db: Session = Depends(get_db)):
         return r
     ctx = lang_context(request)
 
-    hh_id = known_household_id(request)
+    hh_id, mem_id = known_household(request)
     if hh_id is not None:
         household = db.get(Household, hh_id)
         if household is not None and household.members:
-            # Le cookie ne retient que le foyer, pas quel membre précis s'est
-            # identifié la dernière fois — on salue le premier membre importé,
-            # imprécision acceptée pour ce MVP sur un foyer à plusieurs personnes.
-            member = household.members[0]
-            return templates.TemplateResponse(
+            # Le cookie retient la personne qui s'est identifiée (par son téléphone,
+            # à la porte ou au lookup) : c'est elle qu'on salue. Repli sur le premier
+            # membre du foyer seulement si le cookie est antérieur au 2026-07-31, ou
+            # si ce membre a disparu de la base depuis (réimport de la liste).
+            member = next((m for m in household.members if m.id == mem_id), None) or household.members[0]
+            resp = templates.TemplateResponse(
                 request,
                 "rsvp.html",
                 {
@@ -70,6 +71,10 @@ def rsvp_page(request: Request, db: Session = Depends(get_db)):
                     **ctx,
                 },
             )
+            # Recharge le cookie au format complet : un invité entré avant le correctif
+            # est raccroché à la bonne personne dès sa prochaine identification.
+            set_household_cookie(resp, household.id, member.id)
+            return resp
 
     return templates.TemplateResponse(request, "rsvp.html", {"step": "phone", "error": False, **ctx})
 
@@ -189,5 +194,8 @@ def rsvp_submit(
         "rsvp.html",
         {"step": "success", "error": False, "lang_switch_path": "/rsvp", **lang_context(request)},
     )
-    set_household_cookie(resp, household.id)
+    # Le formulaire ne transporte que household_id : on préserve le membre déjà reconnu
+    # dans le cookie plutôt que de l'effacer à la soumission (sinon la personne perdrait
+    # son identité juste après avoir répondu).
+    set_household_cookie(resp, household.id, known_household(request)[1])
     return resp

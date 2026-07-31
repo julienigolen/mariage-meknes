@@ -24,6 +24,7 @@ def gate_page(request: Request):
 @router.post("/entree")
 def gate_submit(request: Request, code: str = Form(""), db: Session = Depends(get_db)):
     household_id = None
+    member_id = None
 
     if not code_matches(code):
         # Repli : le champ accepte aussi un numéro de téléphone connu (feedback
@@ -37,6 +38,9 @@ def gate_submit(request: Request, code: str = Form(""), db: Session = Depends(ge
                 request, "gate.html", {"error": True, **lang_context(request)}, status_code=401
             )
         household_id = member.household_id
+        # On retient AUSSI quelle personne du foyer s'est identifiée : c'est elle que
+        # /rsvp doit saluer, pas le premier membre importé (bug Patron 2026-07-31).
+        member_id = member.id
 
     resp = RedirectResponse("/", status_code=303)
     resp.set_cookie(
@@ -48,5 +52,5 @@ def gate_submit(request: Request, code: str = Form(""), db: Session = Depends(ge
         secure=settings.env == "prod",
     )
     if household_id is not None:
-        set_household_cookie(resp, household_id)
+        set_household_cookie(resp, household_id, member_id)
     return resp
