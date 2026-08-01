@@ -146,7 +146,7 @@ def whatsapp_groups_root(request: Request, db: Session = Depends(get_db)):
         return templates.TemplateResponse(
             request,
             "admin_whatsapp_group.html",
-            {"group": None, "index": 0, "total": 0, "prev_id": None, "next_id": None, "admin": current_admin(request, db)},
+            {"group": None, "groups": [], "admin": current_admin(request, db)},
         )
     return RedirectResponse(f"/admin/whatsapp/groups/{groups[0].id}", status_code=303)
 
@@ -159,18 +159,10 @@ def whatsapp_group_detail(group_id: int, request: Request, db: Session = Depends
     group = next((g for g in groups if g.id == group_id), None)
     if group is None:
         return RedirectResponse("/admin/whatsapp/groups", status_code=303)
-    index = groups.index(group)
     return templates.TemplateResponse(
         request,
         "admin_whatsapp_group.html",
-        {
-            "group": group,
-            "index": index,
-            "total": len(groups),
-            "prev_id": groups[index - 1].id if index > 0 else None,
-            "next_id": groups[index + 1].id if index < len(groups) - 1 else None,
-            "admin": current_admin(request, db),
-        },
+        {"group": group, "groups": groups, "admin": current_admin(request, db)},
     )
 
 

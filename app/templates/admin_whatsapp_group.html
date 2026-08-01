@@ -4,12 +4,23 @@
 {% block content %}
 <section class="w-full px-6 lg:px-8 py-8">
   <div class="max-w-[640px] mx-auto">
-    <div class="flex items-center justify-between gap-4 mb-6">
+    <div class="mb-6">
       <a href="/admin/whatsapp" class="text-small font-semibold text-zellige-text hover:underline">&larr; Invitations WhatsApp</a>
-      {% if total %}
-      <p class="text-small text-ardoise">Groupe {{ index + 1 }} / {{ total }}</p>
-      {% endif %}
     </div>
+
+    {% if groups|length > 1 %}
+    {#- Un onglet par groupe (Patron 2026-08-01, remplace le prev/next -- 5 à 10 groupes
+        tiennent tous à l'écran d'un coup, plus pratique qu'avancer un par un). -#}
+    <div class="flex flex-wrap gap-2 mb-6">
+      {% for g in groups %}
+      <a href="/admin/whatsapp/groups/{{ g.id }}"
+         class="inline-flex items-center h-9 px-3 rounded-md text-small font-semibold transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune
+                {% if group and g.id == group.id %}bg-vert text-white{% else %}border border-bord-fort text-zellige-text hover:bg-zellige-veil{% endif %}">
+        {{ g.label }}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
 
     {% if not group %}
     <div class="bg-surface border border-bord rounded-xl p-10 text-center">
@@ -36,17 +47,6 @@
         Enregistrer
       </button>
     </form>
-
-    <div class="flex items-center justify-between mt-6">
-      {% if prev_id %}
-      <a href="/admin/whatsapp/groups/{{ prev_id }}" class="text-small font-semibold text-zellige-text hover:underline">&larr; Groupe précédent</a>
-      {% else %}
-      <span></span>
-      {% endif %}
-      {% if next_id %}
-      <a href="/admin/whatsapp/groups/{{ next_id }}" class="text-small font-semibold text-zellige-text hover:underline">Groupe suivant &rarr;</a>
-      {% endif %}
-    </div>
     {% endif %}
   </div>
 </section>
