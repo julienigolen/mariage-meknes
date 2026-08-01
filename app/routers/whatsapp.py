@@ -25,11 +25,13 @@ router = APIRouter(prefix="/admin/whatsapp")
 
 # Pré-rempli à la création d'un groupe (Patron 2026-08-01) -- point de départ à ajuster
 # par groupe, jamais régénéré ni traduit ensuite (même principe que le message RSVP,
-# proposition_produit.md §5.17). "[lien du groupe]" reste littéral : le lien n'est en
-# général pas encore connu au moment où le groupe est créé (juste un libellé tapé sur
-# l'écran liste) -- le Patron le remplace par le vrai lien une fois le groupe créé dans
-# WhatsApp.
-_DEFAULT_MESSAGE = """Bonjour,
+# proposition_produit.md §5.17). Deux placeholders littéraux, substitués uniquement au
+# moment de générer le lien wa.me (cf. partials/whatsapp_table.html), jamais écrits en
+# base : "[lien du groupe]" (le lien n'est en général pas encore connu au moment où le
+# groupe est créé -- juste un libellé tapé sur l'écran liste) et "[Prénom]" (premier mot
+# du champ Invité de CETTE personne, donc différent par contact même si le message est
+# partagé par tout le groupe).
+_DEFAULT_MESSAGE = """Bonjour [Prénom],
 
 Avec Kenza, on se marie le vendredi 23 octobre 2026 à Meknès (Palais Laraki) — et on est ravis de vous compter parmi nos invités !
 
