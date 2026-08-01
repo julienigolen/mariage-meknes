@@ -9,10 +9,11 @@
 
 Même auth que /admin/invites (app/admin_auth.py).
 """
+import re
 from datetime import date as date_type
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -135,6 +136,40 @@ def whatsapp_set_sent_date(
             member.whatsapp_invite_envoyee_le = None
         db.commit()
     return _list_response(request, db)
+
+
+def _vcard_escape(value: str) -> str:
+    """Échappe , ; \\ et retours à la ligne -- seuls caractères spéciaux du format
+    vCard (RFC 6350 §3.4) susceptibles d'apparaître dans un nom."""
+    return value.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;").replace("\n", "\\n")
+
+
+@router.get("/member/{member_id}/vcard")
+def whatsapp_member_vcard(member_id: int, request: Request, db: Session = Depends(get_db)):
+    """Fiche contact téléchargeable (Patron 2026-08-01) -- pour importer un invité dans le
+    répertoire du téléphone avant de lui écrire, sans repasser par WhatsApp. Prénom = premier
+    mot du champ Invité, même découpage que le placeholder [Prénom] (partials/whatsapp_table.html)."""
+    if (r := admin_redirect(request)) is not None:
+        return r
+    member = db.get(HouseholdMember, member_id)
+    if member is None:
+        return Response(status_code=404)
+    parts = member.nom_prenom.split(maxsplit=1)
+    prenom, nom = (parts[0], parts[1]) if len(parts) > 1 else (parts[0], "")
+    vcard = (
+        "BEGIN:VCARD\r\n"
+        "VERSION:3.0\r\n"
+        f"N:{_vcard_escape(nom)};{_vcard_escape(prenom)};;;\r\n"
+        f"FN:{_vcard_escape(member.nom_prenom)}\r\n"
+        f"TEL;TYPE=CELL:{member.phone}\r\n"
+        "END:VCARD\r\n"
+    )
+    filename = re.sub(r'[\\/:*?"<>|]', "", member.nom_prenom).strip() or "contact"
+    return Response(
+        content=vcard,
+        media_type="text/vcard",
+        headers={"Content-Disposition": f'attachment; filename="{filename}.vcf"'},
+    )
 
 
 @router.get("/groups")

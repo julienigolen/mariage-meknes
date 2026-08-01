@@ -63,9 +63,11 @@
             le VRAI lien saisi (sa seule source de vérité, WhatsappGroup.invite_link ; sans
             lien saisi, reste affiché tel quel plutôt que de disparaître silencieusement) et
             "[Prénom]" par le premier mot du champ Invité de CETTE personne (Patron
-            2026-08-01) -- même message de groupe, prénom différent par contact. -#}
-        {% set final_message = m.whatsapp_group.message | replace('[lien du groupe]', m.whatsapp_group.invite_link) if m.whatsapp_group.invite_link else m.whatsapp_group.message %}
-        {% set final_message = final_message | replace('[Prénom]', m.nom_prenom.split()[0]) %}
+            2026-08-01) -- même message de groupe, prénom différent par contact. `ireplace`
+            (templates_engine.py) plutôt que `replace` : insensible à la casse, le texte
+            est retapé à la main et la casse exacte n'est pas garantie. -#}
+        {% set final_message = m.whatsapp_group.message | ireplace('[lien du groupe]', m.whatsapp_group.invite_link) if m.whatsapp_group.invite_link else m.whatsapp_group.message %}
+        {% set final_message = final_message | ireplace('[Prénom]', m.nom_prenom.split()[0]) %}
         <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ final_message | urlencode }}"
            target="_blank" rel="noopener" onclick="markWhatsappSent({{ m.id }})"
            class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-vert text-white font-semibold text-small hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
@@ -74,7 +76,13 @@
         {% endif %}
       </td>
 
-      <td class="px-2 py-1"><div class="h-11 flex items-center text-encre tabular-nums" dir="ltr">{{ m.phone }}</div></td>
+      <td class="px-2 py-1">
+        {#- Fiche vCard (Patron 2026-08-01) : importer l'invité dans le répertoire du
+            téléphone avant de lui écrire -- app/routers/whatsapp.py::whatsapp_member_vcard. -#}
+        <a href="/admin/whatsapp/member/{{ m.id }}/vcard"
+           class="h-11 flex items-center text-zellige-text tabular-nums hover:underline" dir="ltr"
+           title="Télécharger la fiche contact (.vcf)">{{ m.phone }}</a>
+      </td>
 
       <td class="px-2 py-1">
         <input type="text" value="{{ m.whatsapp_group.label if m.whatsapp_group else '' }}" placeholder="Nom du groupe…"

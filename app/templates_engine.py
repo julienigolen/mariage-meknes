@@ -30,7 +30,20 @@ def asset(path: str) -> str:
         return url
 
 
+def ireplace(text: str | None, old: str, new: str) -> str:
+    """Remplace `old` par `new` dans `text`, insensible à la casse -- les placeholders
+    [lien du groupe]/[Prénom] (app/templates/partials/whatsapp_table.html) sont du texte
+    libre retapé par le Patron, la casse exacte n'est pas garantie (constaté 2026-08-01 :
+    "[Lien du groupe]" ne matchait pas "[lien du groupe]"). Remplacement par une fonction,
+    pas une chaîne : `new` peut contenir des "\\" (URL, nom) que re.sub interpréterait
+    sinon comme des groupes de capture."""
+    if text is None:
+        return ""
+    return re.sub(re.escape(old), lambda _m: new, text, flags=re.IGNORECASE)
+
+
 templates.env.globals["asset"] = asset
 templates.env.globals["settings"] = settings
 # wa.me n'accepte que des chiffres (pas de "+", espaces, tirets) -- app/routers/whatsapp.py.
 templates.env.filters["digits_only"] = lambda s: re.sub(r"\D", "", s or "")
+templates.env.filters["ireplace"] = ireplace
