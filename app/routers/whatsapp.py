@@ -14,7 +14,7 @@ from datetime import date as date_type
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse, Response
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.admin_auth import admin_redirect, current_admin
@@ -59,12 +59,20 @@ def _all_groups(db: Session) -> list[WhatsappGroup]:
 
 
 def _get_or_create_group(db: Session, label: str) -> WhatsappGroup | None:
-    """Retrouve un groupe par libellé exact, ou le crée -- même logique que
-    household.import_famille_label, pas d'écran de création séparé."""
+    """Retrouve un groupe par libellé, ou le crée -- même logique que
+    household.import_famille_label, pas d'écran de création séparé.
+
+    Comparaison insensible à la casse (Patron 2026-08-01, incident réel) : deux
+    personnes tapant "Famille Benani" et "famille benani" atterrissaient dans deux
+    groupes DIFFÉRENTS sans que ça se voie à l'écran -- le lien/message saisi sur l'un
+    n'existait pas sur l'autre, symptôme "la substitution ne marche pas" pour la
+    seconde personne alors que le code de substitution lui-même était correct."""
     label = label.strip()
     if not label:
         return None
-    group = db.execute(select(WhatsappGroup).where(WhatsappGroup.label == label)).scalar_one_or_none()
+    group = db.execute(
+        select(WhatsappGroup).where(func.lower(WhatsappGroup.label) == label.lower())
+    ).scalar_one_or_none()
     if group is None:
         group = WhatsappGroup(label=label, message=_DEFAULT_MESSAGE)
         db.add(group)
