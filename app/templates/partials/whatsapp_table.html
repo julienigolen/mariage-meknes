@@ -58,7 +58,14 @@
             faux, avec un message qui pointe vers la correction. -#}
         <span class="text-small text-danger-text" title="Numéro sans indicatif pays -- à corriger dans Invités &amp; RSVP avant d'envoyer">— numéro incomplet</span>
         {% else %}
-        <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ m.whatsapp_group.message | urlencode }}"
+        {#- Substitution du placeholder "[lien du groupe]" par le VRAI lien saisi sur
+            cet écran (Patron 2026-08-01 : le message contenait encore le texte littéral,
+            pas le lien) -- calculée ici, jamais écrite en base, pour que le message
+            reste le gabarit édité sur l'écran groupe et le lien sa seule source de
+            vérité (app/models.py::WhatsappGroup.invite_link). Sans lien saisi, le
+            placeholder reste affiché tel quel plutôt que de disparaître silencieusement. -#}
+        {% set final_message = m.whatsapp_group.message | replace('[lien du groupe]', m.whatsapp_group.invite_link) if m.whatsapp_group.invite_link else m.whatsapp_group.message %}
+        <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ final_message | urlencode }}"
            target="_blank" rel="noopener" onclick="markWhatsappSent({{ m.id }})"
            class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-vert text-white font-semibold text-small hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
           wa.me
