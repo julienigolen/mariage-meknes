@@ -175,6 +175,35 @@ def admin_import(request: Request, fichier: UploadFile = File(...), db: Session 
     )
 
 
+@router.post("/invites/create")
+def admin_create_contact(
+    request: Request,
+    nom_prenom: str = Form(""),
+    phone: str = Form(""),
+    famille: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    """Crée un nouveau foyer + son invité principal directement depuis l'écran (Patron
+    2026-08-01) -- jusqu'ici seul l'import Excel permettait d'ajouter un foyer, un ajout
+    ponctuel obligeait à repasser par un fichier. `admin_add_secondary` reste le chemin
+    pour un 2e membre d'un foyer déjà créé, ce foyer-ci commence à un seul membre."""
+    if (r := admin_redirect(request)) is not None:
+        return r
+    nom_prenom = nom_prenom.strip()
+    phone = phone.strip()
+    famille = famille.strip()
+    if nom_prenom and phone:
+        household = Household(import_famille_label=famille or None)
+        db.add(household)
+        db.flush()
+        db.add(HouseholdMember(household_id=household.id, nom_prenom=nom_prenom, phone=normalize_phone(phone)))
+        try:
+            db.commit()
+        except IntegrityError:
+            db.rollback()  # téléphone déjà connu ailleurs -- création ignorée
+    return _tbody_response(request, db)
+
+
 @router.get("/export")
 def admin_export(request: Request, db: Session = Depends(get_db)):
     if (r := admin_redirect(request)) is not None:

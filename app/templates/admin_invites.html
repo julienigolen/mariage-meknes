@@ -32,6 +32,34 @@
       </div>
     </div>
 
+    {#- Créer un foyer + son invité principal (Patron 2026-08-01) : jusqu'ici seul
+        l'import Excel permettait d'ajouter un foyer, un ajout ponctuel (ex. un invité
+        de dernière minute) obligeait à repasser par un fichier. Un 2e membre du même
+        foyer s'ajoute ensuite via la colonne "Invité secondaire" du tableau, pas ici. -#}
+    <form method="post" action="/admin/invites/create" hx-post="/admin/invites/create"
+          hx-target="#invites-table" hx-swap="outerHTML" hx-on::after-request="if (event.detail.successful) this.reset()"
+          class="flex flex-wrap items-end gap-2 bg-surface border border-bord rounded-xl p-4 mb-6">
+      <div>
+        <label for="create-nom" class="block text-small font-semibold text-encre mb-1.5">Invité</label>
+        <input type="text" id="create-nom" name="nom_prenom" required placeholder="Prénom Nom"
+               class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+      </div>
+      <div>
+        <label for="create-phone" class="block text-small font-semibold text-encre mb-1.5">Téléphone</label>
+        <input type="text" id="create-phone" name="phone" required dir="ltr" placeholder="+212612345678"
+               class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+      </div>
+      <div>
+        <label for="create-famille" class="block text-small font-semibold text-encre mb-1.5">Famille (optionnel)</label>
+        <input type="text" id="create-famille" name="famille" placeholder="—"
+               class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+      </div>
+      <button type="submit"
+              class="h-10 px-4 rounded-md bg-vert text-white font-semibold hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+        Ajouter un invité
+      </button>
+    </form>
+
     {% include "partials/admin_kpi_row.html" %}
 
     {% if not households %}
