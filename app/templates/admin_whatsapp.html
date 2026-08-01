@@ -30,4 +30,18 @@
     {% endif %}
   </div>
 </section>
+
+<script>
+function markWhatsappSent(memberId) {
+  // Marque la date d'envoi du jour (Patron 2026-08-01) -- ne bloque pas l'ouverture de
+  // wa.me dans son nouvel onglet, qui suit son cours normalement en parallèle.
+  var fd = new URLSearchParams({ value: new Date().toISOString().slice(0, 10) });
+  fetch('/admin/whatsapp/member/' + memberId + '/sent-date', { method: 'POST', body: fd })
+    .then(function (res) { return res.text(); })
+    .then(function (html) {
+      var table = document.getElementById('whatsapp-table');
+      if (table) table.outerHTML = html;
+    });
+}
+</script>
 {% endblock %}

@@ -13,6 +13,7 @@
       <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Groupe</th>
       <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Lien du groupe</th>
       <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[90px]">Message</th>
+      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[100px]">Envoyer</th>
       <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[140px]">Envoyée le</th>
     </tr>
   </thead>
@@ -43,6 +44,25 @@
            class="inline-flex items-center justify-center h-9 px-3 rounded-md border border-bord-fort text-zellige-text font-semibold text-small hover:bg-zellige-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
           Message
         </a>
+        {% endif %}
+      </td>
+      <td class="px-2 py-1 text-center">
+        {#- Lien wa.me (Patron 2026-08-01) : ouvre WhatsApp avec le message du groupe
+            pré-rempli dans la conversation du contact -- rien n'est envoyé tout seul,
+            l'invité (ici Kenza/Julien) valide l'envoi dans WhatsApp. Nécessite un groupe
+            ET un message non vide, sinon rien à préremplir. Le clic marque aussi la date
+            d'envoi du jour (onclick, cf. script en bas de admin_whatsapp.html) : ça
+            correspond à l'ouverture de la conversation pré-remplie, pas à la confirmation
+            que l'envoi a bien eu lieu dans WhatsApp -- même limite qu'une case cochée à
+            la main, discuté avec le Patron. -#}
+        {% if m.whatsapp_group and m.whatsapp_group.message %}
+        <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ m.whatsapp_group.message | urlencode }}"
+           target="_blank" rel="noopener" onclick="markWhatsappSent({{ m.id }})"
+           class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-vert text-white font-semibold text-small hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+          wa.me
+        </a>
+        {% else %}
+        <span class="text-small text-ardoise" title="Il faut un groupe avec un message enregistré">—</span>
         {% endif %}
       </td>
       <td class="px-2 py-1">

@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from fastapi.templating import Jinja2Templates
@@ -31,3 +32,5 @@ def asset(path: str) -> str:
 
 templates.env.globals["asset"] = asset
 templates.env.globals["settings"] = settings
+# wa.me n'accepte que des chiffres (pas de "+", espaces, tirets) -- app/routers/whatsapp.py.
+templates.env.filters["digits_only"] = lambda s: re.sub(r"\D", "", s or "")
