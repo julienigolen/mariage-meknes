@@ -80,7 +80,7 @@ def whatsapp_list(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse(
         request,
         "admin_whatsapp.html",
-        {"members": _all_members(db), "admin": current_admin(request, db)},
+        {"members": _all_members(db), "groups": _all_groups(db), "admin": current_admin(request, db)},
     )
 
 

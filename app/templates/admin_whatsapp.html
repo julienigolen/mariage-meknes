@@ -3,7 +3,10 @@
 
 {% block content %}
 <section class="w-full px-6 lg:px-8 py-8">
-  <div class="max-w-content mx-auto">
+  {#- Pleine largeur (Patron 2026-08-01) : même raison que /admin/invites -- ce n'est
+      pas un "carton" d'invitation, le token `max-w-content` ne fait que réduire
+      l'espace dispo pour un tableau qui a déjà son propre défilement horizontal. -#}
+  <div>
     <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
       <div>
         <h1 class="font-display text-h2 text-encre">Invitations WhatsApp</h1>
@@ -24,6 +27,20 @@
       <p class="text-small text-ardoise mt-2">Importez d'abord votre liste depuis « Invités &amp; RSVP ».</p>
     </div>
     {% else %}
+    {#- Filtres -- en dehors de #whatsapp-table, jamais touchés par le swap outerHTML
+        d'une édition (cf. partials/whatsapp_table.html). -#}
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <input type="search" id="whatsapp-filter-text" placeholder="Rechercher (nom, téléphone, groupe…)"
+             class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre placeholder-ardoise focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none w-full sm:w-72">
+      <select id="whatsapp-filter-groupe"
+              class="h-10 px-3 rounded-md bg-surface border border-bord-fort text-encre focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none">
+        <option value="">Tous groupes</option>
+        {% for g in groups %}
+        <option value="{{ g.label }}">{{ g.label }}</option>
+        {% endfor %}
+      </select>
+      <p id="whatsapp-filter-count" class="text-small text-ardoise"></p>
+    </div>
     <div class="bg-surface border border-bord rounded-xl shadow-sm overflow-x-auto">
       {% include "partials/whatsapp_table.html" %}
     </div>
@@ -43,5 +60,91 @@ function markWhatsappSent(memberId) {
       if (table) table.outerHTML = html;
     });
 }
+
+(function () {
+  // Tri clic-sur-en-tête + filtres (même pattern que admin_invites.html). Certaines
+  // colonnes (Envoyer, Message) n'ont pas de data-sort-index -- elles sont ignorées par
+  // le tri, mais restent comptées dans row.cells par leur position réelle.
+  var filterText = document.getElementById('whatsapp-filter-text');
+  var filterGroupe = document.getElementById('whatsapp-filter-groupe');
+  var countLabel = document.getElementById('whatsapp-filter-count');
+  if (!filterText) return;  // page sans tableau (aucun invité)
+
+  var state = { sortIndex: null, sortDir: 1 };
+  var GROUPE_CELL_INDEX = 3;
+
+  function cellValue(td) {
+    if (!td) return '';
+    var input = td.querySelector('input');
+    if (input) return input.value;
+    var select = td.querySelector('select');
+    if (select) return select.options[select.selectedIndex].text;
+    return td.textContent.trim();
+  }
+
+  function rowMatches(row) {
+    var groupe = filterGroupe.value;
+    if (groupe && cellValue(row.cells[GROUPE_CELL_INDEX]) !== groupe) return false;
+    var q = filterText.value.trim().toLowerCase();
+    if (!q) return true;
+    for (var i = 0; i < row.cells.length; i++) {
+      if (cellValue(row.cells[i]).toLowerCase().indexOf(q) !== -1) return true;
+    }
+    return false;
+  }
+
+  function applyState() {
+    var table = document.getElementById('whatsapp-table');
+    if (!table) return;
+    var tbody = table.querySelector('tbody');
+    var rows = Array.prototype.slice.call(tbody.rows);
+
+    if (state.sortIndex !== null) {
+      var idx = state.sortIndex;
+      var th = table.querySelector('th[data-sort-index="' + idx + '"]');
+      var type = th ? th.getAttribute('data-sort-type') : 'text';
+      var dir = state.sortDir;
+      rows.sort(function (a, b) {
+        var va = cellValue(a.cells[idx]);
+        var vb = cellValue(b.cells[idx]);
+        if (type === 'number') {
+          return (parseFloat(va || 0) - parseFloat(vb || 0)) * dir;
+        }
+        return va.localeCompare(vb, 'fr', { sensitivity: 'base' }) * dir;
+      });
+      rows.forEach(function (row) { tbody.appendChild(row); });
+    }
+
+    var visible = 0;
+    rows.forEach(function (row) {
+      var show = rowMatches(row);
+      row.style.display = show ? '' : 'none';
+      if (show) visible += 1;
+    });
+    countLabel.textContent = visible + ' / ' + rows.length + ' invité(s) affiché(s)';
+
+    table.querySelectorAll('th[data-sort-index]').forEach(function (thEl) {
+      var arrow = thEl.querySelector('.sort-arrow');
+      var isActive = parseInt(thEl.getAttribute('data-sort-index'), 10) === state.sortIndex;
+      thEl.setAttribute('aria-sort', isActive ? (state.sortDir === 1 ? 'ascending' : 'descending') : 'none');
+      if (arrow) arrow.textContent = isActive ? (state.sortDir === 1 ? '▲' : '▼') : '';
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var thEl = e.target.closest('#whatsapp-table th[data-sort-index]');
+    if (!thEl) return;
+    var idx = parseInt(thEl.getAttribute('data-sort-index'), 10);
+    state.sortDir = (state.sortIndex === idx) ? -state.sortDir : 1;
+    state.sortIndex = idx;
+    applyState();
+  });
+
+  filterText.addEventListener('input', applyState);
+  filterGroupe.addEventListener('change', applyState);
+  document.body.addEventListener('htmx:afterSwap', applyState);
+
+  applyState();
+})();
 </script>
 {% endblock %}

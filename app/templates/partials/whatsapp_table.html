@@ -4,30 +4,77 @@
 
     Une ligne par PERSONNE (principal ou secondaire), pas par foyer -- contrairement à
     /admin/invites qui condense un foyer sur une ligne. Ici chacun a son propre envoi
-    WhatsApp, donc son propre suivi. -#}
-<table id="whatsapp-table" class="w-full min-w-[980px]">
+    WhatsApp, donc son propre suivi.
+
+    "Envoyer" (wa.me) juste après "Invité" (Patron 2026-08-01, tableau illisible sur
+    mobile) : c'est l'action la plus utile, elle doit rester visible sans défiler
+    horizontalement à travers Groupe/Lien/Message d'abord.
+
+    Tri + filtres (même pattern que admin_invites_table.html) : data-sort-index aligné
+    sur la position des <td> ci-dessous, data-sort-type pour le tri numérique éventuel
+    (aucune colonne numérique ici, tout est "text" -- une date ISO en input[type=date]
+    se trie déjà correctement en comparaison de chaînes). Pas de data-sort-index sur
+    Envoyer/Message : ce sont des actions, rien à trier. -#}
+<table id="whatsapp-table" class="w-full min-w-[1150px]">
   <thead>
     <tr class="border-b border-bord">
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Invité</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[150px]">Téléphone</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Groupe</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Lien du groupe</th>
-      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[90px]">Message</th>
+      {%- macro th(label, index, min_w, extra='') %}
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 {{ min_w }} {{ extra }} cursor-pointer select-none hover:text-encre"
+          data-sort-index="{{ index }}" data-sort-type="text">
+        <span class="inline-flex items-center gap-1">{{ label }}<span class="sort-arrow text-zellige-text w-3 inline-block" aria-hidden="true"></span></span>
+      </th>
+      {%- endmacro %}
+      {{ th("Invité", 0, "min-w-[200px]") }}
       <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[100px]">Envoyer</th>
-      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[140px]">Envoyée le</th>
+      {{ th("Téléphone", 2, "min-w-[150px]") }}
+      {{ th("Groupe", 3, "min-w-[200px]") }}
+      {{ th("Lien du groupe", 4, "min-w-[220px]") }}
+      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[90px]">Message</th>
+      {{ th("Envoyée le", 6, "min-w-[140px]") }}
     </tr>
   </thead>
   <tbody class="divide-y divide-bord">
     {% for m in members %}
     <tr class="hover:bg-vert-veil">
       <td class="px-2 py-1"><div class="h-11 flex items-center text-encre">{{ m.nom_prenom }}</div></td>
+
+      <td class="px-2 py-1 text-center">
+        {#- Lien wa.me (Patron 2026-08-01) : ouvre WhatsApp avec le message du groupe
+            pré-rempli dans la conversation du contact -- rien n'est envoyé tout seul,
+            l'invité (ici Kenza/Julien) valide l'envoi dans WhatsApp. Nécessite un groupe
+            ET un message non vide, sinon rien à préremplir. Le clic marque aussi la date
+            d'envoi du jour (onclick, cf. script en bas de admin_whatsapp.html) : ça
+            correspond à l'ouverture de la conversation pré-remplie, pas à la confirmation
+            que l'envoi a bien eu lieu dans WhatsApp -- même limite qu'une case cochée à
+            la main, discuté avec le Patron. -#}
+        {% if not m.whatsapp_group or not m.whatsapp_group.message %}
+        <span class="text-small text-ardoise" title="Il faut un groupe avec un message enregistré">—</span>
+        {% elif not m.phone.startswith('+') %}
+        {#- wa.me exige le numéro complet AVEC indicatif pays (sans le "+", sans le 0
+            national) -- un numéro stocké en format national ("0661697780") envoyé tel
+            quel donne l'erreur WhatsApp "n'existe pas" (constaté par le Patron
+            2026-08-01) : on ne peut pas déduire l'indicatif sans ambiguïté FR/MA
+            (cf. app/phone.py::phone_candidates), donc on bloque plutôt que de deviner
+            faux, avec un message qui pointe vers la correction. -#}
+        <span class="text-small text-danger-text" title="Numéro sans indicatif pays -- à corriger dans Invités &amp; RSVP avant d'envoyer">— numéro incomplet</span>
+        {% else %}
+        <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ m.whatsapp_group.message | urlencode }}"
+           target="_blank" rel="noopener" onclick="markWhatsappSent({{ m.id }})"
+           class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-vert text-white font-semibold text-small hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+          wa.me
+        </a>
+        {% endif %}
+      </td>
+
       <td class="px-2 py-1"><div class="h-11 flex items-center text-encre tabular-nums" dir="ltr">{{ m.phone }}</div></td>
+
       <td class="px-2 py-1">
         <input type="text" value="{{ m.whatsapp_group.label if m.whatsapp_group else '' }}" placeholder="Nom du groupe…"
                hx-post="/admin/whatsapp/member/{{ m.id }}/group-label" name="value"
                hx-trigger="blur changed" hx-target="#whatsapp-table" hx-swap="outerHTML"
                class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
       </td>
+
       <td class="px-2 py-1">
         {% if m.whatsapp_group %}
         <input type="text" value="{{ m.whatsapp_group.invite_link or '' }}" placeholder="chat.whatsapp.com/…" dir="ltr"
@@ -38,6 +85,7 @@
         <span class="text-small text-ardoise px-2">— définir un groupe d'abord</span>
         {% endif %}
       </td>
+
       <td class="px-2 py-1 text-center">
         {% if m.whatsapp_group %}
         <a href="/admin/whatsapp/groups/{{ m.whatsapp_group.id }}"
@@ -46,25 +94,7 @@
         </a>
         {% endif %}
       </td>
-      <td class="px-2 py-1 text-center">
-        {#- Lien wa.me (Patron 2026-08-01) : ouvre WhatsApp avec le message du groupe
-            pré-rempli dans la conversation du contact -- rien n'est envoyé tout seul,
-            l'invité (ici Kenza/Julien) valide l'envoi dans WhatsApp. Nécessite un groupe
-            ET un message non vide, sinon rien à préremplir. Le clic marque aussi la date
-            d'envoi du jour (onclick, cf. script en bas de admin_whatsapp.html) : ça
-            correspond à l'ouverture de la conversation pré-remplie, pas à la confirmation
-            que l'envoi a bien eu lieu dans WhatsApp -- même limite qu'une case cochée à
-            la main, discuté avec le Patron. -#}
-        {% if m.whatsapp_group and m.whatsapp_group.message %}
-        <a href="https://wa.me/{{ m.phone | digits_only }}?text={{ m.whatsapp_group.message | urlencode }}"
-           target="_blank" rel="noopener" onclick="markWhatsappSent({{ m.id }})"
-           class="inline-flex items-center justify-center h-9 px-3 rounded-md bg-vert text-white font-semibold text-small hover:bg-vert-hover transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
-          wa.me
-        </a>
-        {% else %}
-        <span class="text-small text-ardoise" title="Il faut un groupe avec un message enregistré">—</span>
-        {% endif %}
-      </td>
+
       <td class="px-2 py-1">
         <input type="date" value="{{ m.whatsapp_invite_envoyee_le.isoformat() if m.whatsapp_invite_envoyee_le else '' }}" dir="ltr"
                hx-post="/admin/whatsapp/member/{{ m.id }}/sent-date" name="value"
