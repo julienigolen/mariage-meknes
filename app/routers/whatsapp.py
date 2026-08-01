@@ -23,6 +23,23 @@ from app.templates_engine import templates
 
 router = APIRouter(prefix="/admin/whatsapp")
 
+# Pré-rempli à la création d'un groupe (Patron 2026-08-01) -- point de départ à ajuster
+# par groupe, jamais régénéré ni traduit ensuite (même principe que le message RSVP,
+# proposition_produit.md §5.17). "[lien du groupe]" reste littéral : le lien n'est en
+# général pas encore connu au moment où le groupe est créé (juste un libellé tapé sur
+# l'écran liste) -- le Patron le remplace par le vrai lien une fois le groupe créé dans
+# WhatsApp.
+_DEFAULT_MESSAGE = """Bonjour,
+
+Avec Kenza, on se marie le vendredi 23 octobre 2026 à Meknès (Palais Laraki) — et on est ravis de vous compter parmi nos invités !
+
+Pour suivre les infos et échanger avec les autres invités, rejoignez le groupe WhatsApp : [lien du groupe]
+
+Toutes les infos pratiques (programme, comment venir, RSVP...) sont sur notre site : https://mariage-maroc.igolen.com — à la porte d'entrée, entrez simplement votre numéro de téléphone, il vous reconnaîtra directement.
+
+À très vite,
+Kenza & Julien"""
+
 
 def _all_members(db: Session) -> list[HouseholdMember]:
     return list(
@@ -46,7 +63,7 @@ def _get_or_create_group(db: Session, label: str) -> WhatsappGroup | None:
         return None
     group = db.execute(select(WhatsappGroup).where(WhatsappGroup.label == label)).scalar_one_or_none()
     if group is None:
-        group = WhatsappGroup(label=label)
+        group = WhatsappGroup(label=label, message=_DEFAULT_MESSAGE)
         db.add(group)
         db.flush()
     return group
