@@ -1,0 +1,57 @@
+{#- Table complète (thead + tbody), cible du swap HTMX -- même raison que
+    admin_invites_table.html : un <tbody> renvoyé seul se fait déformer par le
+    navigateur hors d'un <table>, donc on swap toute la <table> à chaque édition.
+
+    Une ligne par PERSONNE (principal ou secondaire), pas par foyer -- contrairement à
+    /admin/invites qui condense un foyer sur une ligne. Ici chacun a son propre envoi
+    WhatsApp, donc son propre suivi. -#}
+<table id="whatsapp-table" class="w-full min-w-[980px]">
+  <thead>
+    <tr class="border-b border-bord">
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Invité</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[150px]">Téléphone</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[200px]">Groupe</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[220px]">Lien du groupe</th>
+      <th class="text-overline text-ardoise font-semibold text-center px-2 py-2 min-w-[90px]">Message</th>
+      <th class="text-overline text-ardoise font-semibold text-left px-2 py-2 min-w-[140px]">Envoyée le</th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-bord">
+    {% for m in members %}
+    <tr class="hover:bg-vert-veil">
+      <td class="px-2 py-1"><div class="h-11 flex items-center text-encre">{{ m.nom_prenom }}</div></td>
+      <td class="px-2 py-1"><div class="h-11 flex items-center text-encre tabular-nums" dir="ltr">{{ m.phone }}</div></td>
+      <td class="px-2 py-1">
+        <input type="text" value="{{ m.whatsapp_group.label if m.whatsapp_group else '' }}" placeholder="Nom du groupe…"
+               hx-post="/admin/whatsapp/member/{{ m.id }}/group-label" name="value"
+               hx-trigger="blur changed" hx-target="#whatsapp-table" hx-swap="outerHTML"
+               class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
+      </td>
+      <td class="px-2 py-1">
+        {% if m.whatsapp_group %}
+        <input type="text" value="{{ m.whatsapp_group.invite_link or '' }}" placeholder="chat.whatsapp.com/…" dir="ltr"
+               hx-post="/admin/whatsapp/member/{{ m.id }}/group-link" name="value"
+               hx-trigger="blur changed" hx-target="#whatsapp-table" hx-swap="outerHTML"
+               class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre placeholder-ardoise">
+        {% else %}
+        <span class="text-small text-ardoise px-2">— définir un groupe d'abord</span>
+        {% endif %}
+      </td>
+      <td class="px-2 py-1 text-center">
+        {% if m.whatsapp_group %}
+        <a href="/admin/whatsapp/groups/{{ m.whatsapp_group.id }}"
+           class="inline-flex items-center justify-center h-9 px-3 rounded-md border border-bord-fort text-zellige-text font-semibold text-small hover:bg-zellige-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+          Message
+        </a>
+        {% endif %}
+      </td>
+      <td class="px-2 py-1">
+        <input type="date" value="{{ m.whatsapp_invite_envoyee_le.isoformat() if m.whatsapp_invite_envoyee_le else '' }}" dir="ltr"
+               hx-post="/admin/whatsapp/member/{{ m.id }}/sent-date" name="value"
+               hx-trigger="change" hx-target="#whatsapp-table" hx-swap="outerHTML"
+               class="w-full h-11 px-2 rounded-md bg-transparent border border-transparent hover:border-bord focus:bg-surface focus:border-zellige focus:ring-2 focus:ring-zellige/30 focus:outline-none text-encre tabular-nums">
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

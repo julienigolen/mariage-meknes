@@ -21,7 +21,15 @@
   {% block header %}
   <header class="bg-surface border-b-2 border-bord">
     <div class="max-w-content mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-      <span class="font-display text-h4 text-encre">Kenza <span class="text-vert-text">&amp;</span> Julien — Admin</span>
+      <div class="flex items-center gap-6">
+        <span class="font-display text-h4 text-encre">Kenza <span class="text-vert-text">&amp;</span> Julien — Admin</span>
+        {% if admin %}
+        <nav class="flex items-center gap-4 text-small font-medium">
+          <a href="/admin/invites" class="text-zellige-text hover:underline">Invités &amp; RSVP</a>
+          <a href="/admin/whatsapp" class="text-zellige-text hover:underline">Invitations WhatsApp</a>
+        </nav>
+        {% endif %}
+      </div>
       {% if admin %}
       <form method="post" action="/admin/logout">
         <button type="submit" class="text-small text-zellige-text hover:underline">Se déconnecter</button>

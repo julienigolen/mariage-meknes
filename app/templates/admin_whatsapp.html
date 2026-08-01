@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+{% block title %}Invitations WhatsApp — Admin{% endblock %}
+
+{% block content %}
+<section class="w-full px-6 lg:px-8 py-8">
+  <div class="max-w-content mx-auto">
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <h1 class="font-display text-h2 text-encre">Invitations WhatsApp</h1>
+        <p class="text-small text-ardoise mt-1">
+          Une ligne par invité (principal ou secondaire). Rattachez un groupe, son lien
+          d'invitation, puis notez la date d'envoi une fois le message parti.
+        </p>
+      </div>
+      <a href="/admin/whatsapp/groups"
+         class="h-10 px-4 inline-flex items-center rounded-md border border-zellige text-zellige-text font-semibold hover:bg-zellige-veil transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-zellige focus-visible:ring-offset-2 focus-visible:ring-offset-dune">
+        Gérer les messages par groupe
+      </a>
+    </div>
+
+    {% if not members %}
+    <div class="bg-surface border border-bord rounded-xl p-10 text-center">
+      <p class="text-body-lg text-encre font-medium">Aucun invité pour l'instant.</p>
+      <p class="text-small text-ardoise mt-2">Importez d'abord votre liste depuis « Invités &amp; RSVP ».</p>
+    </div>
+    {% else %}
+    <div class="bg-surface border border-bord rounded-xl shadow-sm overflow-x-auto">
+      {% include "partials/whatsapp_table.html" %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
