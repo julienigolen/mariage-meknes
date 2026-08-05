@@ -5,9 +5,17 @@ déjà complet (espaces, tirets, points, parenthèses, préfixe international 00
 reconstruit pas l'indicatif depuis l'origine.
 """
 import re
+import unicodedata
 
 
 def normalize_phone(raw: str) -> str:
+    # Retire d'abord les caractères de contrôle/formatage INVISIBLES (marques
+    # bidirectionnelles type U+202C, espaces de largeur nulle, BOM...) -- artefact
+    # fréquent d'un copier-coller depuis WhatsApp ou une autre app qui enveloppe un
+    # numéro pour son affichage RTL/LTR (Patron 2026-08-01 : "+33616095740" suivi d'un
+    # POP DIRECTIONAL FORMATTING invisible à l'oeil mais stocké tel quel -- unicité et
+    # comparaisons faussées en aval sans que rien ne le laisse deviner à l'écran).
+    raw = "".join(ch for ch in raw if unicodedata.category(ch) not in ("Cf", "Cc"))
     cleaned = re.sub(r"[\s\-.()]", "", raw.strip())
     if cleaned.startswith("00"):
         cleaned = "+" + cleaned[2:]
